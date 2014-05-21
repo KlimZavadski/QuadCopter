@@ -39,6 +39,15 @@
 typedef unsigned char byte;
 extern "C" void __cxa_pure_virtual() {;}
 
+void initDrivers();
+void startDrivers();
+void stopDrivers();
+void _writeToDrivers(int value);
+void initSensors();
+void updateSensorData(int type);
+int _lowpass(int prev, int curr);
+long _lowpass(long prev, long curr);
+float _lowpass(float prev, float curr);
 //
 //
 
