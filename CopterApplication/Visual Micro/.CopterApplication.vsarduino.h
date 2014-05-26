@@ -12,6 +12,7 @@
 #define _VSARDUINO_H_
 #define __AVR_ATmega328p__
 #define __AVR_ATmega328P__
+#define _VMDEBUG 1
 #define ARDUINO 105
 #define ARDUINO_MAIN
 #define __AVR__
@@ -42,14 +43,17 @@ extern "C" void __cxa_pure_virtual() {;}
 void initDrivers();
 void startDrivers();
 void stopDrivers();
-void _writeToDrivers(int value);
+void writeToDrivers(int value);
 void initSensors();
 void updateSensorData(int type);
 int _lowpass(int prev, int curr);
 long _lowpass(long prev, long curr);
 float _lowpass(float prev, float curr);
+int receiveData(byte buffer[]);
+int transmiteData(byte buffer[], int size);
 //
 //
+void control(byte data[6]);
 
 #include "C:\arduino\hardware\arduino\cores\arduino\arduino.h"
 #include "C:\arduino\hardware\arduino\variants\standard\pins_arduino.h" 

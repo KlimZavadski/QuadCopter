@@ -39,25 +39,25 @@ void initDrivers()
 
     for (int i = 10; i < 80; i++)
     {
-        _writeToDrivers(i);
+        writeToDrivers(i);
     }
 }
 
 void startDrivers()
 {
-    _writeToDrivers(90);
+    writeToDrivers(90);
     delay(100);
-    _writeToDrivers(87);
+    writeToDrivers(87);
     delay(100);
-    _writeToDrivers(idleValue);
+    writeToDrivers(idleValue);
 }
 
 void stopDrivers()
 {
-    _writeToDrivers(stopValue);
+    writeToDrivers(stopValue);
 }
 
-void _writeToDrivers(int value)
+void writeToDrivers(int value)
 {
     delay(10);
     driver1.write(value);
@@ -168,9 +168,7 @@ void updateSensorData(int type)
             break;
         case Usonic:
         {
-            float distance = _ultrasonic.Ranging(CM);
-
-            usonicData.distance = _lowpass(usonicData.distance, distance);
+            usonicData.distance = _ultrasonic.Ranging(CM);
             break;
         }
         case Bar:
@@ -213,19 +211,82 @@ float _lowpass(float prev, float curr)
 
 #ifndef RTController
 
+int receiveData(byte buffer[])
+{
+    int count = 0;
+    char buf[10];
+
+    if (Serial.available())
+    {
+        Serial.readBytes(&buf[0], 6);
+
+        for (int i = 0; i < 6; i++)
+        {
+            buffer[i] = (byte)buf[i];
+        }
+
+        Serial.flush();
+        return 6;
+    }
+
+    /*while (Serial.available())
+    {
+        buffer[count] = (byte)Serial.read();
+        count++;
+    }*/
+
+    
+
+    Serial.flush();
+
+    return count;
+}
+
+int transmiteData(byte buffer[], int size)
+{
+    int count = 0;
+
+    while (count < size)
+    {
+        Serial.write((int)buffer[count]);
+        count++;
+    }
+    Serial.flush();
+
+    return count;
+}
+
 #endif //endregion
 
 
 void setup()
 {
+    // Init Bluetooth.
+    Serial.begin(115200);
+    //pinMode(13, OUTPUT);
+    pinMode(8, OUTPUT);
+    digitalWrite(8, LOW);
 
-  /* add setup code here */
-
+    initDrivers();
+    startDrivers();
+    //initSensors();
 }
 
 void loop()
 {
+    byte data[10];
+    int size = receiveData(data);
+    if (size != 0)
+    {
+        control(data);
+        //transmiteData(data, size);
+    }
 
-  /* add main program code here */
+    delay(50);
+}
 
+void control(byte data[6])
+{
+    int val = map(data[3], 0, 128, 110, 90);
+    writeToDrivers(val);
 }
