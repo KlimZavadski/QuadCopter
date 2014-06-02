@@ -4,7 +4,7 @@
 #include <BMP180.h>
 #include <Ultrasonic.h>
 
-
+//----------Pins----------
 #ifndef Pins
 
 #define DRIVER_1_PIN 2
@@ -20,14 +20,16 @@
 #define TRIG_PIN 10
 #define ECHO_PIN 11
 
-
 #endif //endregion
 
+
+//----------DriversController----------
 #ifndef DriversController
 
 Servo driver1, driver2, driver3, driver4;
 int idleValue = 85;
 int stopValue = 80;
+int driver1Speed, driver2Speed, driver3Speed, driver4Speed;
 
 void initDrivers()
 {
@@ -39,44 +41,53 @@ void initDrivers()
 
     for (int i = 10; i < 80; i++)
     {
-        writeToDrivers(i);
+        setDriversSpeed(i);
     }
 }
 
 void startDrivers()
 {
-    writeToDrivers(90);
+    setDriversSpeed(90);
     delay(100);
-    writeToDrivers(87);
+    setDriversSpeed(87);
     delay(100);
-    writeToDrivers(idleValue);
+    setDriversSpeed(idleValue);
 }
 
 void stopDrivers()
 {
-    writeToDrivers(stopValue);
+    setDriversSpeed(stopValue);
 }
 
-void writeToDrivers(int value)
+void setDriversSpeed()
 {
     delay(10);
-    driver1.write(value);
-    driver2.write(value);
-    driver3.write(value);
-    driver4.write(value);
+    driver1.write(driver1Speed);
+    driver2.write(driver2Speed);
+    driver3.write(driver3Speed);
+    driver4.write(driver4Speed);
+}
+
+void setDriversSpeed(int value)
+{
+    driver1Speed = driver2Speed = driver3Speed = driver4Speed = value;
+    setDriversSpeed();
 }
 
 #endif //endregion
 
+
+//----------SensorsController----------
 #ifndef SensorsController
 
 float _a = 0.45 / (0.99 + 0.45);
+
 enum SensorType {
     Gyro,
     Acc,
-    Usonic,
     Bar,
-    Magnet
+    Magnet,
+    Usonic
 };
 
 
@@ -94,12 +105,6 @@ typedef struct AccData {
 };
 AccData accData;
 
-typedef struct UsonicData {
-    float distance;
-};
-UsonicData usonicData;
-Ultrasonic _ultrasonic(TRIG_PIN, ECHO_PIN);
-
 typedef struct BarData {
     long pressure;
     float altitude;
@@ -113,12 +118,18 @@ typedef struct MagnetData {
 };
 MagnetData magnetData;
 
+typedef struct UsonicData {
+    float distance;
+};
+UsonicData usonicData;
+Ultrasonic _ultrasonic(TRIG_PIN, ECHO_PIN);
+
 //typedef union SensorData {
 //    GyroData gyro;
 //    AccData acc;
-//    UsonicData usonic;
 //    BarData bar;
 //    MagnetData magnet;
+//    UsonicData usonic;
 //};
 
 
@@ -133,9 +144,6 @@ void initSensors()
 
     // Acc.
 
-    // Usonic.
-    //
-
     // Bar.
     _barometer = BMP180();
     if (_barometer.EnsureConnected())
@@ -147,6 +155,9 @@ void initSensors()
     {
         // TODO: Handle it.
     }
+
+    // Usonic.
+    //
 }
 
 void updateSensorData(int type)
@@ -166,11 +177,6 @@ void updateSensorData(int type)
         }
         case Acc:
             break;
-        case Usonic:
-        {
-            usonicData.distance = _ultrasonic.Ranging(CM);
-            break;
-        }
         case Bar:
         {
             if (_barometer.IsConnected)
@@ -187,6 +193,11 @@ void updateSensorData(int type)
             break;
         case Magnet:
             break;
+        case Usonic:
+        {
+            usonicData.distance = _ultrasonic.Ranging(CM);
+            break;
+        }
         default:
             break;
     }
@@ -209,6 +220,8 @@ float _lowpass(float prev, float curr)
 
 #endif //endregion
 
+
+//----------RTController----------
 #ifndef RTController
 
 int receiveData(byte buffer[])
@@ -259,6 +272,7 @@ int transmiteData(byte buffer[], int size)
 #endif //endregion
 
 
+
 void setup()
 {
     // Init Bluetooth.
@@ -288,5 +302,5 @@ void loop()
 void control(byte data[6])
 {
     int val = map(data[3], 0, 128, 110, 90);
-    writeToDrivers(val);
+    setDriversSpeed(val);
 }

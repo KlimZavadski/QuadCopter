@@ -43,7 +43,8 @@ extern "C" void __cxa_pure_virtual() {;}
 void initDrivers();
 void startDrivers();
 void stopDrivers();
-void writeToDrivers(int value);
+void setDriversSpeed();
+void setDriversSpeed(int value);
 void initSensors();
 void updateSensorData(int type);
 int _lowpass(int prev, int curr);
