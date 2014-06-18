@@ -3,6 +3,9 @@
 
 #include <BMP180.h>
 #include <Ultrasonic.h>
+//#include <iBoardRF24.h>
+//#include <HMC5883L.h>
+//#include <MPU6050.h>
 
 //----------Pins----------
 #ifndef Pins
@@ -123,14 +126,6 @@ typedef struct UsonicData {
 };
 UsonicData usonicData;
 Ultrasonic _ultrasonic(TRIG_PIN, ECHO_PIN);
-
-//typedef union SensorData {
-//    GyroData gyro;
-//    AccData acc;
-//    BarData bar;
-//    MagnetData magnet;
-//    UsonicData usonic;
-//};
 
 
 void initSensors()
