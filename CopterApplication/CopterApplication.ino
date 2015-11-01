@@ -30,7 +30,7 @@
 #ifndef DriversController
 
 Servo driver1, driver2, driver3, driver4;
-int idleValue = 85;
+int idleValue = 87;
 int stopValue = 80;
 int driver1Speed, driver2Speed, driver3Speed, driver4Speed;
 
@@ -51,9 +51,9 @@ void initDrivers()
 void startDrivers()
 {
     setDriversSpeed(90);
-    delay(100);
+    delay(50);
     setDriversSpeed(87);
-    delay(100);
+    delay(50);
     setDriversSpeed(idleValue);
 }
 
@@ -224,28 +224,28 @@ int receiveData(byte buffer[])
     int count = 0;
     char buf[10];
 
-    if (Serial.available())
-    {
-        Serial.readBytes(&buf[0], 6);
+    //if (Serial.available())
+    //{
+    //    Serial.readBytes(&buf[0], 6);
 
-        for (int i = 0; i < 6; i++)
-        {
-            buffer[i] = (byte)buf[i];
-        }
+    //    for (int i = 0; i < 6; i++)
+    //    {
+    //        buffer[i] = (byte)buf[i];
+    //    }
 
-        Serial.flush();
-        return 6;
-    }
+    //    Serial.flush();
+    //    return 6;
+    //}
 
-    /*while (Serial.available())
-    {
-        buffer[count] = (byte)Serial.read();
-        count++;
-    }*/
+    ///*while (Serial.available())
+    //{
+    //    buffer[count] = (byte)Serial.read();
+    //    count++;
+    //}*/
 
-    
+    //
 
-    Serial.flush();
+    //Serial.flush();
 
     return count;
 }
@@ -254,12 +254,12 @@ int transmiteData(byte buffer[], int size)
 {
     int count = 0;
 
-    while (count < size)
+    /*while (count < size)
     {
         Serial.write((int)buffer[count]);
         count++;
     }
-    Serial.flush();
+    Serial.flush();*/
 
     return count;
 }
@@ -270,32 +270,60 @@ int transmiteData(byte buffer[], int size)
 
 void setup()
 {
-    // Init Bluetooth.
-    Serial.begin(115200);
     //pinMode(13, OUTPUT);
     pinMode(8, OUTPUT);
     digitalWrite(8, LOW);
+
+    pinMode(14, INPUT);
+    pinMode(15, INPUT);
+    pinMode(16, INPUT);
+    pinMode(17, INPUT);
+    pinMode(19, OUTPUT);
+    digitalWrite(19, LOW);
 
     initDrivers();
     startDrivers();
     //initSensors();
 }
 
+int dx = 349;
+int dy = 357;
+int dz = 509;
+
 void loop()
 {
-    byte data[10];
-    int size = receiveData(data);
-    if (size != 0)
+    /*int x = dx - analogRead(3);
+    int y = dy - analogRead(2);
+    int z = dz - analogRead(1);
+
+    Serial.print("X=");
+    Serial.print(x);
+    Serial.print("  Y=");
+    Serial.println(y);*/
+
+
+    if (Serial.available())
     {
-        control(data);
-        //transmiteData(data, size);
+        //int speed = (int)Serial.parseInt();
+        char bytes[6];
+        int r = Serial.readBytes(bytes, 6);
+        int speed = (int)bytes[0];
+
+        Serial.read();
+        Serial.flush();
+        Serial.print("Speed: ");
+        Serial.print(speed);
+
+        speed = map(speed, 0, 128, 97, 87);
+        Serial.println(speed);
+        setDriversSpeed(speed);
     }
 
-    delay(50);
+    delay(500);
 }
 
 void control(byte data[6])
 {
-    int val = map(data[3], 0, 128, 110, 90);
-    setDriversSpeed(val);
+    /*int val = map(data[3], 0, 128, 110, 90);
+    setDriversSpeed(val);*/
 }
