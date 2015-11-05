@@ -12,7 +12,7 @@ namespace ConsoleApp
 {
     internal class Program
     {
-        private SerialPort port;
+        private SerialPort _port;
 
 
         public static void Main(String[] args)
@@ -42,7 +42,7 @@ namespace ConsoleApp
                 }
                 else
                 {
-                    port.Close();
+                    _port.Close();
                     Console.WriteLine("Could not find a joystick.");
                     Console.ReadKey();
                     return;
@@ -56,7 +56,7 @@ namespace ConsoleApp
                 Console.WriteLine("Joystick found and opened.");
                 Thread.CurrentThread.Join();
                 _device.CloseDevice();
-                port.Close();
+                _port.Close();
             }
             catch (Exception e)
             {
@@ -64,10 +64,10 @@ namespace ConsoleApp
             }
             finally
             {
-                if (port != null)
+                if (_port != null)
                 {
                     _device.CloseDevice();
-                    port.Close();
+                    _port.Close();
                 }
             }
         }
@@ -76,27 +76,27 @@ namespace ConsoleApp
         {
             try
             {
-                port = new SerialPort(name, rate, Parity.None, 8, StopBits.One)
+                _port = new SerialPort(name, rate, Parity.None, 8, StopBits.One)
                 {
                     Encoding = System.Text.Encoding.UTF8
                 };
-                port.Open();
+                _port.Open();
             }
             catch (Exception ex)
             {
-                port = null;
+                _port = null;
                 Console.WriteLine("Error: Can't open COM port ({0})", ex.Message);
                 return false;
             }
-            port.ErrorReceived += ErrorReceived;
-            port.DataReceived += DataReceived;
+            _port.ErrorReceived += ErrorReceived;
+            _port.DataReceived += DataReceived;
 
             return true;
         }
 
         private void ErrorReceived(object sender, EventArgs e)
         {
-            if (port.IsOpen)
+            if (_port.IsOpen)
             {
                 Console.WriteLine("{0}: Error Received!", DateTime.Now);
             }
@@ -104,42 +104,18 @@ namespace ConsoleApp
 
         private void DataReceived(object sender, EventArgs e)
         {
-            if (port != null && port.BytesToRead >= 0)
+            if (_port != null && _port.BytesToRead >= 0)
             {
-                var ar = new byte[10];
+                var data = new byte[4];
+                var len = _port.Read(data, 0, 4);
 
-                //for (int i = 0; i < port.BytesToRead; i++)
-                //{
-                //    ar[i] = port.ReadByte();
-                //}
-                //var data = port.ReadExisting();
-                //int val1, val2;
-
-                var len = port.Read(ar, 0, 10);
-                var r = len;
-
-                //if (int.TryParse(data.Substring(0, 1), out val1) && int.TryParse(data.Substring(1, 1), out val2))
-                //{
-                Console.WriteLine("Values = [{0}, {1}]", ar[0], ar[1]);
-                //}
-
-                //for (int i = 0; i < 6; i++)
-                //{
-                //    ar[i] = (byte)data[i];
-                //}
-
-                //if (data.Contains("VMDPE_1|"))
-                //{
-                //    return;
-                //}
-                //Console.WriteLine("{0}: {1}", DateTime.Now.ToString("mm:ss:fff"), data);
-                //Console.WriteLine("{0,3} {1,3} {2,3} {3,3} {4,3} {5,3}", ar[0], ar[1], ar[2], ar[3], ar[4], ar[5]);
+                //Console.WriteLine("Values = [{0}, {1}, {2}, {3}]", data[0], data[1], data[2], data[3]);
             }
         }
 
         private const int _reportsInPackage = 10;
         private int _count = 0;
-        private JoystickData[] JoystickDataArray = new JoystickData[_reportsInPackage];
+        private readonly JoystickData[] _joystickDataArray = new JoystickData[_reportsInPackage];
 
         private void OnReport(HidReport report)
         {
@@ -150,59 +126,52 @@ namespace ConsoleApp
 
             if (report.Data.Length == _joystickDataParser.DataSize)
             {
-                byte[] data = report.Data;
-
                 // xBox joystick return 48 bytes data, but used only 6 (0-1 & 4-5).
                 // Playstation joystick return 8 bytes data, but used only 6 (0-6).
                 // Event appears 130 times per sec. Reduce it to 10 times.
-                JoystickDataArray[_count] = _joystickDataParser.Parse(report.Data);
+                _joystickDataArray[_count] = _joystickDataParser.Parse(report.Data);
+                _count++;
 
                 // Send one package with averaged data.
-                if (_count == _reportsInPackage - 1)
+                if (_count == _reportsInPackage)
                 {
                     _count = 0;
                     var averageJoystickData = new JoystickData
                     {
-                        UpDown = Convert.ToByte(JoystickDataArray.Average(x => x.UpDown)),
-                        RotateLeftRight = Convert.ToByte(JoystickDataArray.Average(x => x.RotateLeftRight)),
-                        ForwardBack = Convert.ToByte(JoystickDataArray.Average(x => x.ForwardBack)),
-                        LeftRight = Convert.ToByte(JoystickDataArray.Average(x => x.LeftRight)),
-                        Buttons = JoystickDataArray.Last().Buttons,
-                        Button4PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.Button4PressingDegree)),
-                        Button5PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.Button5PressingDegree)),
-                        Button6PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.Button6PressingDegree)),
-                        Button7PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.Button7PressingDegree)),
-                        AdditionalButtons = JoystickDataArray.Last().AdditionalButtons,
-                        AdditionalButton0PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton0PressingDegree)),
-                        AdditionalButton1PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton1PressingDegree)),
-                        AdditionalButton2PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton2PressingDegree)),
-                        AdditionalButton3PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton3PressingDegree)),
-                        AdditionalButton4PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton4PressingDegree)),
-                        AdditionalButton5PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton5PressingDegree)),
-                        AdditionalButton6PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton6PressingDegree)),
-                        AdditionalButton7PressingDegree = Convert.ToByte(JoystickDataArray.Average(x => x.AdditionalButton7PressingDegree))
+                        UpDown = Convert.ToByte(_joystickDataArray.Average(x => x.UpDown)),
+                        RotateLeftRight = Convert.ToByte(_joystickDataArray.Average(x => x.RotateLeftRight)),
+                        ForwardBack = Convert.ToByte(_joystickDataArray.Average(x => x.ForwardBack)),
+                        LeftRight = Convert.ToByte(_joystickDataArray.Average(x => x.LeftRight)),
+                        Buttons = _joystickDataArray.Last().Buttons,
+                        Button4PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.Button4PressingDegree)),
+                        Button5PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.Button5PressingDegree)),
+                        Button6PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.Button6PressingDegree)),
+                        Button7PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.Button7PressingDegree)),
+                        AdditionalButtons = _joystickDataArray.Last().AdditionalButtons,
+                        AdditionalButton0PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton0PressingDegree)),
+                        AdditionalButton1PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton1PressingDegree)),
+                        AdditionalButton2PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton2PressingDegree)),
+                        AdditionalButton3PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton3PressingDegree)),
+                        AdditionalButton4PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton4PressingDegree)),
+                        AdditionalButton5PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton5PressingDegree)),
+                        AdditionalButton6PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton6PressingDegree)),
+                        AdditionalButton7PressingDegree = Convert.ToByte(_joystickDataArray.Average(x => x.AdditionalButton7PressingDegree))
                     };
 
                     Task.Run(() =>
                     {
                         var radioCarByteArray = averageJoystickData.ToRadioCarByteArray();
-                        radioCarByteArray[0] = 110;
-                        radioCarByteArray[1] = 120;
-                        radioCarByteArray[2] = 130;
-                        radioCarByteArray[3] = 140;
-
-                        port.Write(radioCarByteArray, 0, radioCarByteArray.Length);
+                        _port.Write(radioCarByteArray, 0, radioCarByteArray.Length);
                     });
                 }
 
-                //foreach (var b in data.Take(16))
-                //{
-                //    Console.Write("{0,3} ", b);
-                //}
-                //Console.WriteLine();
+//                foreach (var d in report.Data.Skip(17).Take(20))
+//                {
+//                    Console.Write("{0,3} ", d);
+//                }
+//                Console.WriteLine();
             }
 
-            _count++;
             _device.ReadReport(OnReport);
         }
 
@@ -226,17 +195,21 @@ namespace ConsoleApp
         public byte ForwardBack;
         public byte LeftRight;
 
-        public byte Buttons;
+        public byte Buttons;  // Main group
+        // Arrows
         public byte Button4PressingDegree;
         public byte Button5PressingDegree;
         public byte Button6PressingDegree;
         public byte Button7PressingDegree;
 
-        public byte AdditionalButtons;
+        public byte AdditionalButtons;  // Additional group
+        // Triggers
         public byte AdditionalButton0PressingDegree;
         public byte AdditionalButton1PressingDegree;
+        // Fronters
         public byte AdditionalButton2PressingDegree;
         public byte AdditionalButton3PressingDegree;
+        // Circles
         public byte AdditionalButton4PressingDegree;
         public byte AdditionalButton5PressingDegree;
         public byte AdditionalButton6PressingDegree;
@@ -271,16 +244,16 @@ namespace ConsoleApp
         {
             return new JoystickData
             {
-                UpDown = data[5],
-                RotateLeftRight = data[4],
-                ForwardBack = data[7],
-                LeftRight = data[6],
-                Buttons = data[0],
-                Button4PressingDegree = data[12],
-                Button5PressingDegree = data[13],
-                Button6PressingDegree = data[14],
-                Button7PressingDegree = data[15],
-                AdditionalButtons = data[1],
+                UpDown = data[6],
+                RotateLeftRight = data[5],
+                ForwardBack = data[8],
+                LeftRight = data[7],
+                Buttons = data[1],
+                Button4PressingDegree = data[13],
+                Button5PressingDegree = data[14],
+                Button6PressingDegree = data[15],
+                Button7PressingDegree = data[16],
+                AdditionalButtons = data[2],
                 AdditionalButton0PressingDegree = data[17],
                 AdditionalButton1PressingDegree = data[18],
                 AdditionalButton2PressingDegree = data[19],
