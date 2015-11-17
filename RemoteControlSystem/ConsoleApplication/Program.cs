@@ -109,7 +109,7 @@ namespace ConsoleApp
                 var data = new byte[4];
                 var len = _port.Read(data, 0, 4);
 
-                //Console.WriteLine("Values = [{0}, {1}, {2}, {3}]", data[0], data[1], data[2], data[3]);
+                Console.WriteLine("Values = [{0}, {1}, {2}, {3}]", data[0], data[1], data[2], data[3]);
             }
         }
 
