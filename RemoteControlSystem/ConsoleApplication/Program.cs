@@ -222,7 +222,7 @@ namespace ConsoleApp
 
         public byte[] ToQuadCopterByteArray()
         {
-            return new[] { ForwardBack, LeftRight, UpDown, RotateLeftRight, Buttons, AdditionalButtons };
+            return new[] { UpDown, RotateLeftRight, ForwardBack, LeftRight, Buttons, AdditionalButtons };
         }
     }
 
@@ -244,9 +244,13 @@ namespace ConsoleApp
         {
             return new JoystickData
             {
+                // Up/Down = 0 - 255, 127
                 UpDown = data[6],
+                // Rotate Left/Right = 0 - 255, 128
                 RotateLeftRight = data[5],
+                // Forward/Back = 0 - 255, 127
                 ForwardBack = data[8],
+                // Left/Right = 0 - 255, 128
                 LeftRight = data[7],
                 Buttons = data[1],
                 Button4PressingDegree = data[13],

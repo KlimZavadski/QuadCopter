@@ -10,6 +10,7 @@ namespace NeuronWeightsGenerator
 {
     internal class Program
     {
+        private string _samples = "../../Samples.txt";
         private readonly List<double[]> _inputList = new List<double[]>();
         private readonly List<double[]> _outputList = new List<double[]>();
 
@@ -21,16 +22,18 @@ namespace NeuronWeightsGenerator
 
         private void Worker()
         {
-            double[][] input = new double[4][]
+            Console.WriteLine("Generate samples? y/n");
+            string key = Console.ReadLine();
+
+            if (key == "y")
             {
-                new double[] {0, 0}, new double[] {0, 1},
-                new double[] {1, 0}, new double[] {1, 1}
-            };
-            double[][] output = new double[4][]
+                
+            }
+
+            if (!LoadSamples())
             {
-                new double[] {0}, new double[] {1},
-                new double[] {1}, new double[] {0}
-            };
+                return;
+            }
 
             ActivationNetwork network = new ActivationNetwork(new SigmoidFunction(1), 8, 8, 8, 4);
             BackPropagationLearning teacher = new BackPropagationLearning(network)
@@ -42,21 +45,49 @@ namespace NeuronWeightsGenerator
             const int iterations = 100000;
             double error;
 
-            if (LoadSamples())
+            while (iteration < iterations)
             {
-                while (iteration < iterations)
+                error = teacher.RunEpoch(_inputList.ToArray(), _outputList.ToArray()) / _inputList.Count;
+                iteration++;
+            }
+
+            var result = network.Compute(new[] { 46.0, 0, 0, 0, 0, 0, 0, 0 }).Select(x => x * 75 + 85);
+        }
+
+        private bool GenerateSamples()
+        {
+            using (var stream = new StreamWriter(_samples))
+            {
+                try
                 {
-                    error = teacher.RunEpoch(_inputList.ToArray(), _outputList.ToArray()) / _inputList.Count;
-                    iteration++;
+                    int dr = 87;
+                    int ud = 127;
+                    int rlr = 128;
+                    int fb = 127;
+                    int lr = 128;
+
+                    // UpDown, RotateLeftRight, ForwardBack, LeftRight.
+//                    stream.WriteLine("{0:3}{1:3}{2:3}{3:3}{4:3}{5:3}{6:3}{7:3}{8:3}{9:3}{10:3}{11:3}",
+//                        ud, );
+//
+//                    for (int i = 0; i < 25; i++)
+//                    {
+//
+//                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("GenerateSamples error: {0}", ex.Message);
+                    return false;
                 }
             }
 
-            var result = network.Compute(new[] {46.0, 0, 0, 0, 0, 0, 0, 0}).Select(x => x * 75 + 85);
+            return true;
         }
 
         private bool LoadSamples()
         {
-            using (var stream = new StreamReader("../../Samples.txt"))
+            using (var stream = new StreamReader(_samples))
             {
                 try
                 {
@@ -71,11 +102,16 @@ namespace NeuronWeightsGenerator
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error: {0}", ex.Message);
+                    Console.WriteLine("LoadSamples error: {0}", ex.Message);
                     return false;
                 }
             }
 
+            return true;
+        }
+
+        private bool SaveSamples()
+        {
             return true;
         }
     }
