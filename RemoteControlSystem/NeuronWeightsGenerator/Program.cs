@@ -23,11 +23,11 @@ namespace NeuronWeightsGenerator
         private void Worker()
         {
             Console.WriteLine("Generate samples? y/n");
-            string key = Console.ReadLine();
-
-            if (key == "y")
+            //string key = Console.ReadLine();
+            //if (key == "y")
             {
-                
+                //GenerateSamples();
+                //return;
             }
 
             if (!LoadSamples())
@@ -38,20 +38,32 @@ namespace NeuronWeightsGenerator
             ActivationNetwork network = new ActivationNetwork(new SigmoidFunction(1), 8, 8, 8, 4);
             BackPropagationLearning teacher = new BackPropagationLearning(network)
             {
-                Momentum = 0.1
+                Momentum = 0.0
             };
 
             int iteration = 0;
-            const int iterations = 100000;
-            double error;
+            const int iterations = 10000;
+            double error = 1;
 
-            while (iteration < iterations)
+            while (iteration < iterations && error > 0.0005)
             {
                 error = teacher.RunEpoch(_inputList.ToArray(), _outputList.ToArray()) / _inputList.Count;
                 iteration++;
+
+                if (error < 0.0005)
+                {
+                    Console.WriteLine("Ok! {0}, iter = {1}", error, iteration);
+                }
             }
 
-            var result = network.Compute(new[] { 46.0, 0, 0, 0, 0, 0, 0, 0 }).Select(x => x * 75 + 85);
+            var result1 = network.Compute(new[] { 127.0, 128, 80, 128, 0, 0, 0, 0 }).Select(x => x * 75.0 + 87.0).ToList();
+            var result2 = network.Compute(new[] { 127.0, 128, 180, 128, 0, 0, 0, 0 }).Select(x => x * 75.0 + 87.0).ToList();
+            var result3 = network.Compute(new[] { 127.0, 128, 127, 80, 0, 0, 0, 0 }).Select(x => x * 75.0 + 87.0).ToList();
+            var result4 = network.Compute(new[] { 127.0, 128, 127, 180, 0, 0, 0, 0 }).Select(x => x * 75.0 + 87.0).ToList();
+            var r1 = result1;
+            var r2 = result2;
+            var r3 = result3;
+            var r4 = result4;
         }
 
         private bool GenerateSamples()
@@ -60,20 +72,49 @@ namespace NeuronWeightsGenerator
             {
                 try
                 {
-                    int dr = 87;
-                    int ud = 127;
-                    int rlr = 128;
-                    int fb = 127;
-                    int lr = 128;
+                    const int dr = 87;
+                    const int ud = 127;
+                    const int rlr = 128;
+                    const int fb = 127;
+                    const int lr = 128;
 
-                    // UpDown, RotateLeftRight, ForwardBack, LeftRight.
-//                    stream.WriteLine("{0:3}{1:3}{2:3}{3:3}{4:3}{5:3}{6:3}{7:3}{8:3}{9:3}{10:3}{11:3}",
-//                        ud, );
-//
-//                    for (int i = 0; i < 25; i++)
-//                    {
-//
-//                    }
+                    const double incK = 0.1;
+
+                    //  1   2
+                    //    x
+                    //  4   3
+                    // Up/Down 0-127-255
+                    // Rotate Left/Right 0-128-255
+                    // Forward/Back 0-127-255
+                    // Left/Right 0-128-255
+
+                    // Forward 127-0
+                    for (int value = fb; value >= 0; value--)
+                    {
+                        var engine = dr + (fb - value) * incK;
+                        WriteLine(stream, ud, rlr, value, lr, 0, 0, 0, 0, dr, dr, engine, engine);
+                    }
+
+                    // Back 127-255
+                    for (int value = fb; value <= 255; value++)
+                    {
+                        var engine = dr + (value - fb) * incK;
+                        WriteLine(stream, ud, rlr, value, lr, 0, 0, 0, 0, engine, engine, dr, dr);
+                    }
+
+                    // Left 128-0
+                    for (int value = lr; value >= 0; value--)
+                    {
+                        var engine = dr + (lr - value) * incK;
+                        WriteLine(stream, ud, rlr, fb, value, 0, 0, 0, 0, dr, engine, engine, dr);
+                    }
+
+                    // Right 128-255
+                    for (int value = lr; value <= 255; value++)
+                    {
+                        var engine = dr + (value - lr) * incK;
+                        WriteLine(stream, ud, rlr, fb, value, 0, 0, 0, 0, engine, dr, dr, engine);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -83,6 +124,12 @@ namespace NeuronWeightsGenerator
             }
 
             return true;
+        }
+
+        private void WriteLine(StreamWriter stream, params object[] arg)
+        {
+            stream.WriteLine("{0:000} {1:000} {2:000} {3:000} {4:000} {5:000} {6:000} {7:000} {8:000} {9:000} {10:000} {11:000}",
+                arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9], arg[10], arg[11]);
         }
 
         private bool LoadSamples()
@@ -95,7 +142,7 @@ namespace NeuronWeightsGenerator
                     {
                         var array = stream.ReadLine().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                         var inp = array.Take(8).Select(x => double.Parse(x) / 255.0).ToArray();
-                        var outp = array.Skip(8).Take(4).Select(x => (double.Parse(x) - 85.0) / 75.0).ToArray();
+                        var outp = array.Skip(8).Take(4).Select(x => (double.Parse(x) - 87.0) / 75.0).ToArray();
                         _inputList.Add(inp);
                         _outputList.Add(outp);
                     }
@@ -107,11 +154,6 @@ namespace NeuronWeightsGenerator
                 }
             }
 
-            return true;
-        }
-
-        private bool SaveSamples()
-        {
             return true;
         }
     }

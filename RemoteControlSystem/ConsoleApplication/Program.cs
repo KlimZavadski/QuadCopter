@@ -195,14 +195,16 @@ namespace ConsoleApp
         public byte ForwardBack;
         public byte LeftRight;
 
-        public byte Buttons;  // Main group
+        // Main group
+        public byte Buttons;
         // Arrows
         public byte Button4PressingDegree;
         public byte Button5PressingDegree;
         public byte Button6PressingDegree;
         public byte Button7PressingDegree;
 
-        public byte AdditionalButtons;  // Additional group
+        // Additional group
+        public byte AdditionalButtons;
         // Triggers
         public byte AdditionalButton0PressingDegree;
         public byte AdditionalButton1PressingDegree;
@@ -244,13 +246,13 @@ namespace ConsoleApp
         {
             return new JoystickData
             {
-                // Up/Down = 0 - 255, 127
+                // Up/Down 0-127-255
                 UpDown = data[6],
-                // Rotate Left/Right = 0 - 255, 128
+                // Rotate Left/Right 0-128-255
                 RotateLeftRight = data[5],
-                // Forward/Back = 0 - 255, 127
+                // Forward/Back 0-127-255
                 ForwardBack = data[8],
-                // Left/Right = 0 - 255, 128
+                // Left/Right 0-128-255
                 LeftRight = data[7],
                 Buttons = data[1],
                 Button4PressingDegree = data[13],
