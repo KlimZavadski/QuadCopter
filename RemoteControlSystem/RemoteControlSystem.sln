@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteControlSystem", "RemoteControlSystem\RemoteControlSystem.csproj", "{53D04943-28F3-4B59-8153-D596785D704D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication", "ConsoleApplication\ConsoleApplication.csproj", "{D0D532BA-A337-439F-8F64-E0C42387E58B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoystickLibrary", "JoystickLibrary\JoystickLibrary.csproj", "{23974320-8ABF-46D9-8B0B-E5709B92C885}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationLibrary", "CommunicationLibrary\CommunicationLibrary.csproj", "{223E8F97-A562-480B-A8BB-BC87211F5929}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuronWeightsGenerator", "NeuronWeightsGenerator\NeuronWeightsGenerator.csproj", "{68749FB8-8A31-406C-BE94-3DC78B8441FA}"
 EndProject
@@ -31,10 +29,6 @@ Global
 		{23974320-8ABF-46D9-8B0B-E5709B92C885}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23974320-8ABF-46D9-8B0B-E5709B92C885}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23974320-8ABF-46D9-8B0B-E5709B92C885}.Release|Any CPU.Build.0 = Release|Any CPU
-		{223E8F97-A562-480B-A8BB-BC87211F5929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{223E8F97-A562-480B-A8BB-BC87211F5929}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{223E8F97-A562-480B-A8BB-BC87211F5929}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{223E8F97-A562-480B-A8BB-BC87211F5929}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68749FB8-8A31-406C-BE94-3DC78B8441FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68749FB8-8A31-406C-BE94-3DC78B8441FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68749FB8-8A31-406C-BE94-3DC78B8441FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
