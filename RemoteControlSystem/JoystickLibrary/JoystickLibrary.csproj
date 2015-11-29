@@ -43,7 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Parsers\PlaystationJoystickDataParser.cs" />
+    <Compile Include="Parsers\XBoxJoystickDataParser.cs" />
+    <Compile Include="IJoystickDataParser.cs" />
+    <Compile Include="JoystickData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
