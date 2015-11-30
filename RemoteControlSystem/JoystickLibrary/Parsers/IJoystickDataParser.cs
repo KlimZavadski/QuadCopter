@@ -1,4 +1,4 @@
-﻿namespace JoystickLibrary
+﻿namespace JoystickLibrary.Parsers
 {
     public interface IJoystickDataParser
     {

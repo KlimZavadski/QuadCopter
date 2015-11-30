@@ -43,9 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JoystickDataProvider.cs" />
+    <Compile Include="Parsers\JoystickDataParserFactory.cs" />
+    <Compile Include="JoystickType.cs" />
     <Compile Include="Parsers\PlaystationJoystickDataParser.cs" />
     <Compile Include="Parsers\XBoxJoystickDataParser.cs" />
-    <Compile Include="IJoystickDataParser.cs" />
+    <Compile Include="Parsers\IJoystickDataParser.cs" />
     <Compile Include="JoystickData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
