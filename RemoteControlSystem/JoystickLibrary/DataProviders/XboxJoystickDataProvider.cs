@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace JoystickLibrary.DataProviders
 {
-    class XboxJoystickDataProvider : JoystickDataProvider
+    public class XboxJoystickDataProvider : JoystickDataProvider
     {
         private int _count;
-        private const int _reportsInPackage = 10;
+        private readonly int _reportsInPackage;
         private readonly JoystickData[] _reportArray;
 
         public delegate void PackageDelegate(byte[] data);
@@ -14,8 +14,9 @@ namespace JoystickLibrary.DataProviders
         public event PackageDelegate OnPackageAvailableEvent;
 
         // HID\VID_054C&PID_0268
-        public XboxJoystickDataProvider() : base(JoystickType.XBox, 0x054C)
+        public XboxJoystickDataProvider(int frequency = 10) : base(JoystickType.XBox, 0x054C)
         {
+            _reportsInPackage = frequency;
             _reportArray = new JoystickData[_reportsInPackage];
         }
 
@@ -53,7 +54,7 @@ namespace JoystickLibrary.DataProviders
 
                 if (OnPackageAvailableEvent != null)
                 {
-                    OnPackageAvailableEvent(averageReport.ToRadioCarByteArray());
+                    OnPackageAvailableEvent(averageReport.ToQuadCopterByteArray());
                 }
             }
         }
