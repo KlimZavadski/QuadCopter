@@ -11,6 +11,7 @@ namespace NeuronWeightsGenerator
     internal class Program
     {
         public const string SamplesFile = "../../Samples.txt";
+        public const string WeightsFile = "../../Weights.txt";
         public const string NetworkFile = "../../Network.txt";
 
         private const int _inputCount = 2;
@@ -52,7 +53,7 @@ namespace NeuronWeightsGenerator
             };
 
             int iteration = 0;
-            const int iterations = 5000;
+            const int iterations = 1000;
             double error = 1.0;
 
             while (iteration < iterations && error > 0.0003)
@@ -61,10 +62,10 @@ namespace NeuronWeightsGenerator
                 iteration++;
             }
 
-            Console.WriteLine("Network trained! error = {0}, iteration = {1}\n", error, iteration);
+            Console.WriteLine("Network successfully trained! error = {0}, iteration = {1}\n", error, iteration);
+            SaveWeights(network.Layers.Select(layer => layer.Neurons.Select(neuron => neuron.Weights)));
 
             Helper.ShowAlert("Do you want to save network to file? y/n", () => network.Save(NetworkFile));
-
 
 //            var result1 = network.Compute(new[] { 0.313725, 0.498039, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
 //            var result2 = network.Compute(new[] { 0.498039, 0.705882, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
@@ -92,6 +93,23 @@ namespace NeuronWeightsGenerator
         private int MapNetworkValueToDriver(double value)
         {
             return (int) (value * 75.0 + 87.0);
+        }
+
+        private bool SaveWeights(IEnumerable<IEnumerable<double[]>> weights)
+        {
+            using (var stream = new StreamWriter(WeightsFile))
+            {
+                try
+                {
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("GenerateSamples error: {0}", ex.Message);
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         #region Samples
