@@ -12,7 +12,7 @@ namespace NeuronWeightsGenerator
     {
         public const string SamplesFile = "../../Samples.txt";
         public const string WeightsFile = "../../Weights.txt";
-        public const string NetworkFile = "../../Network.txt";
+        public const string NetworkFile = "../../Network.bin";
 
         private const int _inputCount = 2;
         private const int _outputCount = 4;
@@ -53,17 +53,23 @@ namespace NeuronWeightsGenerator
             };
 
             int iteration = 0;
-            const int iterations = 1000;
+            const int iterations = 5000;
             double error = 1.0;
 
-            while (iteration < iterations && error > 0.0003)
+            while (iteration < iterations && error > 0.0001)
             {
                 error = teacher.RunEpoch(_inputList.ToArray(), _outputList.ToArray()) / _inputList.Count;
                 iteration++;
             }
 
-            Console.WriteLine("Network successfully trained! error = {0}, iteration = {1}\n", error, iteration);
-            SaveWeights(network.Layers.Select(layer => layer.Neurons.Select(neuron => neuron.Weights)));
+            Console.WriteLine("Network successfully trained! error = {0:0.######}, iteration = {1}\n", error, iteration);
+
+            // Normalize weights and convert to string format.
+            var weights = network.Layers
+                .Select(layer => layer.Neurons
+                    .Select(neuron => neuron.Weights
+                        .Select(x => string.Format("{0,6}", Convert.ToInt32(x * 1000.0)))));
+            SaveWeights(weights);
 
             Helper.ShowAlert("Do you want to save network to file? y/n", () => network.Save(NetworkFile));
 
@@ -95,12 +101,27 @@ namespace NeuronWeightsGenerator
             return (int) (value * 75.0 + 87.0);
         }
 
-        private bool SaveWeights(IEnumerable<IEnumerable<double[]>> weights)
+        private bool SaveWeights(IEnumerable<IEnumerable<IEnumerable<string>>> weights)
         {
             using (var stream = new StreamWriter(WeightsFile))
             {
                 try
                 {
+                    int num = 0;
+                    stream.WriteLine("int Weights[] = {");
+
+                    foreach (var layerWeights in weights)
+                    {
+                        stream.WriteLine("    // w{0}", num++);
+
+                        foreach (var neuronWeights in layerWeights)
+                        {
+                            var row = string.Join(", ", neuronWeights);
+                            stream.WriteLine("    {0},", row);
+                        }
+                    }
+
+                    stream.WriteLine("};");
                 }
                 catch (Exception ex)
                 {
