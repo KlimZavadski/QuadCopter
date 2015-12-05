@@ -18,7 +18,7 @@
     <None Include="CopterApplication.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Visual Micro\.CopterApplication.vsarduino.h">
+    <ClInclude Include="__vm\.CopterApplication.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

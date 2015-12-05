@@ -3,12 +3,8 @@
 
 #include <BMP180.h>
 #include <Ultrasonic.h>
-//#include <iBoardRF24.h>
-//#include <HMC5883L.h>
-//#include <MPU6050.h>
 
-//----------Pins----------
-#ifndef Pins
+#pragma region ----------Pins----------
 
 #define DRIVER_1_PIN 2
 #define DRIVER_2_PIN 3
@@ -23,11 +19,9 @@
 #define TRIG_PIN 10
 #define ECHO_PIN 11
 
-#endif //endregion
+#pragma endregion
 
-
-//----------DriversController----------
-#ifndef DriversController
+#pragma region ----------Drivers Controller----------
 
 Servo driver1, driver2, driver3, driver4;
 int idleValue = 87;
@@ -77,11 +71,9 @@ void setDriversSpeed(int value)
     setDriversSpeed();
 }
 
-#endif //endregion
+#pragma endregion
 
-
-//----------SensorsController----------
-#ifndef SensorsController
+#pragma region ----------Sensors Controller----------
 
 float _a = 0.45 / (0.99 + 0.45);
 
@@ -92,7 +84,6 @@ enum SensorType {
     Magnet,
     Usonic
 };
-
 
 typedef struct GyroData {
     int x;
@@ -140,13 +131,13 @@ void initSensors()
     // Acc.
 
     // Bar.
-    _barometer = BMP180();
-    if (_barometer.EnsureConnected())
+    //_barometer = BMP180();
+    //if (_barometer.EnsureConnected())
     {
-        _barometer.SoftReset();
-        _barometer.Initialize();
+    //    _barometer.SoftReset();
+    //    _barometer.Initialize();
     }
-    else
+    //else
     {
         // TODO: Handle it.
     }
@@ -174,16 +165,16 @@ void updateSensorData(int type)
             break;
         case Bar:
         {
-            if (_barometer.IsConnected)
-            {
-                long pressure = _barometer.GetPressure(); // In pascals.
-                float altitude = _barometer.GetAltitude(_seaLevelPressure); // In meters.
-                float temperature = _barometer.GetTemperature(); // In celcius.
+            //if (_barometer.IsConnected)
+            //{
+            //    long pressure = _barometer.GetPressure(); // In pascals.
+            //    float altitude = _barometer.GetAltitude(_seaLevelPressure); // In meters.
+            //    float temperature = _barometer.GetTemperature(); // In celcius.
 
-                barData.pressure = _lowpass(barData.pressure, pressure);
-                barData.altitude = _lowpass(barData.altitude, altitude);
-                barData.temperature = _lowpass(barData.temperature, altitude);
-            }
+            //    barData.pressure = _lowpass(barData.pressure, pressure);
+            //    barData.altitude = _lowpass(barData.altitude, altitude);
+            //    barData.temperature = _lowpass(barData.temperature, altitude);
+            //}
         }
             break;
         case Magnet:
@@ -213,11 +204,9 @@ float _lowpass(float prev, float curr)
     return _a * curr + (1 - _a) * prev;
 }
 
-#endif //endregion
+#pragma endregion
 
-
-//----------RTController----------
-#ifndef RTController
+#pragma region ----------WiFi Controller----------
 
 int receiveData(byte buffer[])
 {
@@ -264,8 +253,7 @@ int transmiteData(byte buffer[], int size)
     return count;
 }
 
-#endif //endregion
-
+#pragma endregion
 
 
 void setup()
