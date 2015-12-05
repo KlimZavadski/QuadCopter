@@ -4,7 +4,12 @@
 #include <BMP180.h>
 #include <Ultrasonic.h>
 
-#pragma region ----------Pins----------
+#include <MemoryFree.h>
+
+#define uint unsigned int
+#define ulong unsigned long
+
+#pragma region -Pins-------------------------
 
 #define DRIVER_1_PIN 2
 #define DRIVER_2_PIN 3
@@ -21,7 +26,7 @@
 
 #pragma endregion
 
-#pragma region ----------Drivers Controller----------
+#pragma region -Drivers Controller-----------
 
 Servo driver1, driver2, driver3, driver4;
 int idleValue = 87;
@@ -73,7 +78,7 @@ void setDriversSpeed(int value)
 
 #pragma endregion
 
-#pragma region ----------Sensors Controller----------
+#pragma region -Sensors Controller-----------
 
 float _a = 0.45 / (0.99 + 0.45);
 
@@ -206,7 +211,7 @@ float _lowpass(float prev, float curr)
 
 #pragma endregion
 
-#pragma region ----------WiFi Controller----------
+#pragma region -WiFi Controller--------------
 
 int receiveData(byte buffer[])
 {
@@ -255,9 +260,111 @@ int transmiteData(byte buffer[], int size)
 
 #pragma endregion
 
+#pragma region -Neural Network---------------
+
+#define Sigma(x) 1.0 / (1.0 + exp(-x))
+
+// Weights of neurons
+// 0-32767, 15bits + sign
+int Weights[] = {
+    // w0
+    1951, 3137,
+    -691, 1386,
+    3727, 585,
+    2911, -2101,
+    -1704, 2825,
+    -94, -618,
+    359, 1569,
+    964, 2434,
+    // w1
+    950, 776, 87, 877, 373, 914, 260, 138,
+    840, -1050, 3532, 3346, -2431, -616, -295, 225,
+    531, 648, -1119, -1470, 1452, -563, 148, 624,
+    1086, 708, 605, 1124, 259, 960, 1065, 285,
+    670, 63, 434, 37, 655, 42, 921, 970,
+    571, 621, 332, 557, 1031, 595, 388, 906,
+    895, 608, 203, 1150, 560, 727, 984, 307,
+    3652, 209, 2085, -1303, 1479, -2392, 714, 2449,
+    // w2
+    -773, 1973, -92, -2063, -736, -1106, -1516, 6535,
+    -780, 4760, -2373, -484, -1147, -1277, -468, -1124,
+    -53, -2261, -758, 690, -753, -177, 140, -6190,
+    -541, -5503, 1212, -496, -445, -660, -327, 1738,
+};
+
+// Input array for neurons.
+// 0-32767, 15bits without sign.
+uint Input[8];
+
+// Output array for neurons.
+// 0-32767, 15bits without sign.
+uint Output[8];
+
+void computeNeuron(byte num)
+{
+    if (num < 8)  // First layer.
+    {
+        long sum = 0;
+
+        for (byte i = 0; i < 4; i++)
+        {
+            sum += (long) Input[i] * Weights[num * 4 + i];
+        }
+
+        double norm = sum / 1073676289.0;  // normalization to (0,1).
+        uint result = Sigma(norm) * 32767.0;  // restore to uint.
+        Output[num] = result;
+    }
+    else if (num < 16)  // Second layer.
+    {
+        long sum = 0;
+
+        for (byte i = 0; i < 8; i++)
+        {
+            sum += (long) Output[i] * Weights[num * 8 + i];
+        }
+
+        double norm = sum / 1073676289.0;  // normalization to (0,1).
+        uint result = Sigma(norm) * 32767.0;  // restore to uint.
+        Input[num] = result;
+    }
+    if (num < 20)
+    {
+        long sum = 0;
+
+        for (byte i = 0; i < 8; i++)
+        {
+            sum += (long) Input[i] * Weights[num * 8 + i];
+        }
+
+        double norm = sum / 1073676289.0;  // normalization to (0,1).
+        uint result = Sigma(norm) * 32767.0;  // restore to uint.
+        Output[num] = result;
+    }
+}
+
+#pragma endregion
+
+#pragma region printf.h
+
+int serial_putc(char c, FILE *)
+{
+    Serial.write(c);
+    return c;
+}
+
+void printf_begin(void)
+{
+    fdevopen(&serial_putc, 0);
+}
+
+#pragma endregion
+
 
 void setup()
 {
+    Serial.begin(115200);
+
     //pinMode(13, OUTPUT);
     pinMode(8, OUTPUT);
     digitalWrite(8, LOW);
@@ -274,12 +381,30 @@ void setup()
     //initSensors();
 }
 
-int dx = 349;
-int dy = 357;
-int dz = 509;
-
 void loop()
 {
+    Serial.println(sizeof(Weights) + sizeof(Input) * 2);
+    Serial.println(2048 - freeMemory());
+    Serial.println();
+
+    Input[0] = 0;
+    Input[1] = 240;
+    Input[2] = 0;
+    Input[3] = 220;
+
+    size_t time = micros();
+
+    for (byte n = 0; n < 20; n++)
+    {
+        computeNeuron(n);
+    }
+
+    time = micros() - time;
+    Serial.println();
+    Serial.println(time);
+
+    while (true);
+
     /*int x = dx - analogRead(3);
     int y = dy - analogRead(2);
     int z = dz - analogRead(1);
