@@ -50,7 +50,7 @@
             // 
             this.trackBar1.Location = new System.Drawing.Point(248, 60);
             this.trackBar1.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar1.Maximum = 120;
+            this.trackBar1.Maximum = 140;
             this.trackBar1.Minimum = 85;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -62,7 +62,7 @@
             // 
             this.trackBar2.Location = new System.Drawing.Point(694, 60);
             this.trackBar2.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar2.Maximum = 120;
+            this.trackBar2.Maximum = 140;
             this.trackBar2.Minimum = 85;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -74,7 +74,7 @@
             // 
             this.trackBar4.Location = new System.Drawing.Point(128, 348);
             this.trackBar4.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar4.Maximum = 120;
+            this.trackBar4.Maximum = 140;
             this.trackBar4.Minimum = 85;
             this.trackBar4.Name = "trackBar4";
             this.trackBar4.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -86,7 +86,7 @@
             // 
             this.trackBar3.Location = new System.Drawing.Point(838, 348);
             this.trackBar3.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar3.Maximum = 120;
+            this.trackBar3.Maximum = 140;
             this.trackBar3.Minimum = 85;
             this.trackBar3.Name = "trackBar3";
             this.trackBar3.Orientation = System.Windows.Forms.Orientation.Vertical;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using AForge.Neuro;
@@ -59,7 +58,7 @@ namespace NeuronsTestApplication
 
         private void OnPackageAvailable(byte[] data)
         {
-            var inputs = data.Skip(2).Take(2).Select(Convert.ToDouble).ToArray();
+            var inputs = data.Skip(2).Take(2).Select(Helper.MapJoystickValueToNetwork).ToArray();
             var outputs = _network.Compute(inputs).Select(Helper.MapNetworkValueToDriver).ToArray();
 
             Invoke(new InvokeDelegate(UpdateUI), outputs);

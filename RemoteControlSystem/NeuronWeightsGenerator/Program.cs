@@ -53,26 +53,31 @@ namespace NeuronWeightsGenerator
                 Momentum = 0.1
             };
 
+            Console.WriteLine("Start training the network.");
+
             int iteration = 0;
-            const int iterations = 10000;
+            const int iterations = 5000;
             double error = 1.0;
 
-            while (iteration < iterations)
+            while (iteration < iterations && error < 0.00005)
             {
                 error = teacher.RunEpoch(_inputList.ToArray(), _outputList.ToArray()) / _inputList.Count;
                 iteration++;
             }
 
-            Console.WriteLine("Network successfully trained! error = {0:0.######}, iteration = {1}\n", error, iteration);
+            Console.WriteLine("Network successfully trained! Error = {0:0.######}, Iteration = {1}\n", error, iteration);
 
             // Normalize weights and convert to string format.
             var weights = network.Layers
                 .Select(layer => layer.Neurons
                     .Select(neuron => neuron.Weights
                         .Select(x => string.Format("{0,6}", Convert.ToInt32(x * 1000.0)))));
-            SaveWeights(weights);
 
-            ExtendedIOHelpers.ShowAlert("Do you want to save network to file? y/n  ", () => network.Save(NetworkFile));
+            ExtendedIOHelpers.ShowAlert("Do you want to save network to file? y/n  ", () =>
+            {
+                SaveWeights(weights);
+                network.Save(NetworkFile);
+            });
 
 //            var result1 = network.Compute(new[] { 0.313725, 0.498039, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
 //            var result2 = network.Compute(new[] { 0.498039, 0.705882, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
@@ -209,7 +214,7 @@ namespace NeuronWeightsGenerator
                         var outp =
                             array.Skip(InputCount)
                                 .Take(OutputCount)
-                                .Select(x => Helper.MapDriverValueToNetwork(int.Parse(x)))
+                                .Select(x => Helper.MapJoystickValueToNetwork(byte.Parse(x)))
                                 .ToArray();
                         _inputList.Add(inp);
                         _outputList.Add(outp);

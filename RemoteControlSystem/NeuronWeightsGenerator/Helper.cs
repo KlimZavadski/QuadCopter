@@ -4,7 +4,7 @@ namespace NeuronWeightsGenerator
 {
     public static class Helper
     {
-        public static double MapDriverValueToNetwork(int value)
+        public static double MapJoystickValueToNetwork(byte value)
         {
             return (value - 87) / 75.0;
         }
