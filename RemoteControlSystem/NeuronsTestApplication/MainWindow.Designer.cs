@@ -48,105 +48,121 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Location = new System.Drawing.Point(124, 31);
+            this.trackBar1.Location = new System.Drawing.Point(248, 60);
+            this.trackBar1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.trackBar1.Maximum = 255;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar1.Size = new System.Drawing.Size(45, 104);
+            this.trackBar1.Size = new System.Drawing.Size(90, 200);
             this.trackBar1.TabIndex = 0;
             // 
             // trackBar2
             // 
-            this.trackBar2.Location = new System.Drawing.Point(347, 31);
+            this.trackBar2.Location = new System.Drawing.Point(694, 60);
+            this.trackBar2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.trackBar2.Maximum = 255;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar2.Size = new System.Drawing.Size(45, 104);
+            this.trackBar2.Size = new System.Drawing.Size(90, 200);
             this.trackBar2.TabIndex = 1;
             // 
             // trackBar3
             // 
-            this.trackBar3.Location = new System.Drawing.Point(64, 181);
+            this.trackBar3.Location = new System.Drawing.Point(128, 348);
+            this.trackBar3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.trackBar3.Maximum = 255;
             this.trackBar3.Name = "trackBar3";
             this.trackBar3.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar3.Size = new System.Drawing.Size(45, 104);
+            this.trackBar3.Size = new System.Drawing.Size(90, 200);
             this.trackBar3.TabIndex = 2;
             // 
             // trackBar4
             // 
-            this.trackBar4.Location = new System.Drawing.Point(419, 181);
+            this.trackBar4.Location = new System.Drawing.Point(838, 348);
+            this.trackBar4.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.trackBar4.Maximum = 255;
             this.trackBar4.Name = "trackBar4";
             this.trackBar4.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar4.Size = new System.Drawing.Size(45, 104);
+            this.trackBar4.Size = new System.Drawing.Size(90, 200);
             this.trackBar4.TabIndex = 3;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(69, 140);
+            this.label1.Location = new System.Drawing.Point(138, 269);
+            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 13);
+            this.label1.Size = new System.Drawing.Size(97, 25);
             this.label1.TabIndex = 4;
             this.label1.Text = "Engine 1";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(124, 137);
+            this.textBox1.Location = new System.Drawing.Point(248, 263);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(45, 20);
+            this.textBox1.Size = new System.Drawing.Size(86, 31);
             this.textBox1.TabIndex = 5;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(347, 137);
+            this.textBox2.Location = new System.Drawing.Point(694, 263);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(45, 20);
+            this.textBox2.Size = new System.Drawing.Size(86, 31);
             this.textBox2.TabIndex = 7;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(292, 140);
+            this.label2.Location = new System.Drawing.Point(584, 269);
+            this.label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 13);
+            this.label2.Size = new System.Drawing.Size(97, 25);
             this.label2.TabIndex = 6;
             this.label2.Text = "Engine 2";
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(419, 288);
+            this.textBox3.Location = new System.Drawing.Point(838, 554);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(45, 20);
+            this.textBox3.Size = new System.Drawing.Size(86, 31);
             this.textBox3.TabIndex = 9;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(364, 291);
+            this.label3.Location = new System.Drawing.Point(728, 560);
+            this.label3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(49, 13);
+            this.label3.Size = new System.Drawing.Size(97, 25);
             this.label3.TabIndex = 8;
             this.label3.Text = "Engine 3";
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(64, 288);
+            this.textBox4.Location = new System.Drawing.Point(128, 554);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(45, 20);
+            this.textBox4.Size = new System.Drawing.Size(86, 31);
             this.textBox4.TabIndex = 11;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 291);
+            this.label4.Location = new System.Drawing.Point(18, 560);
+            this.label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 13);
+            this.label4.Size = new System.Drawing.Size(97, 25);
             this.label4.TabIndex = 10;
             this.label4.Text = "Engine 1";
             // 
             // MainWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(774, 569);
+            this.ClientSize = new System.Drawing.Size(1548, 1094);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox3);
@@ -159,6 +175,7 @@
             this.Controls.Add(this.trackBar3);
             this.Controls.Add(this.trackBar2);
             this.Controls.Add(this.trackBar1);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "MainWindow";
             this.Text = "Main window";
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
