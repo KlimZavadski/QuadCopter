@@ -44,6 +44,9 @@
     <Reference Include="AForge.Neuro">
       <HintPath>..\packages\AForge.Neuro.2.2.5\lib\AForge.Neuro.dll</HintPath>
     </Reference>
+    <Reference Include="ExtendedLibrary">
+      <HintPath>..\..\..\ExtendedLibrary\ExtendedLibrary\bin\Release\ExtendedLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

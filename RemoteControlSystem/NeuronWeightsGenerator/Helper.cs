@@ -4,21 +4,14 @@ namespace NeuronWeightsGenerator
 {
     public static class Helper
     {
-        public delegate bool BoolAction();
-
-        public static void ShowAlert(string message, Action action)
+        public static double MapDriverValueToNetwork(int value)
         {
-            Console.WriteLine(message);
-            if (Console.ReadLine() == "y")
-            {
-                action();
-            }
+            return (value - 87) / 75.0;
         }
 
-        public static bool ShowAlert(string message, BoolAction action)
+        public static int MapNetworkValueToDriver(double value)
         {
-            Console.WriteLine(message);
-            return Console.ReadLine() == "y" && action();
+            return (int) (value * 75.0 + 87.0);
         }
     }
 }

@@ -5,17 +5,18 @@ using System.Linq;
 using System.Threading;
 using AForge.Neuro;
 using AForge.Neuro.Learning;
+using ExtendedLibrary;
 
 namespace NeuronWeightsGenerator
 {
-    internal class Program
+    public class Program
     {
-        public const string SamplesFile = "../../Samples.txt";
-        public const string WeightsFile = "../../Weights.txt";
-        public const string NetworkFile = "../../Network.bin";
+        public const string SamplesFile = "../../../NeuronWeightsGenerator/Samples.txt";
+        public const string WeightsFile = "../../../NeuronWeightsGenerator/Weights.txt";
+        public const string NetworkFile = "../../../NeuronWeightsGenerator/Network.bin";
 
-        private const int _inputCount = 2;
-        private const int _outputCount = 4;
+        public const int InputCount = 2;
+        public const int OutputCount = 4;
         private readonly List<double[]> _inputList = new List<double[]>();
         private readonly List<double[]> _outputList = new List<double[]>();
 
@@ -39,24 +40,24 @@ namespace NeuronWeightsGenerator
 
         private void Worker()
         {
-            Helper.ShowAlert("Generate new samples before training? y/n\n", () => GenerateSamples());
+            ExtendedIOHelpers.ShowAlert("Generate new samples before training? y/n  ", () => GenerateSamples());
 
             if (!LoadSamples())
             {
                 return;
             }
 
-            var network = new ActivationNetwork(new SigmoidFunction(1), _inputCount, 8, 8, _outputCount);
+            var network = new ActivationNetwork(new SigmoidFunction(1), InputCount, 8, 8, OutputCount);
             var teacher = new BackPropagationLearning(network)
             {
                 Momentum = 0.1
             };
 
             int iteration = 0;
-            const int iterations = 5000;
+            const int iterations = 10000;
             double error = 1.0;
 
-            while (iteration < iterations && error > 0.0001)
+            while (iteration < iterations)
             {
                 error = teacher.RunEpoch(_inputList.ToArray(), _outputList.ToArray()) / _inputList.Count;
                 iteration++;
@@ -71,7 +72,7 @@ namespace NeuronWeightsGenerator
                         .Select(x => string.Format("{0,6}", Convert.ToInt32(x * 1000.0)))));
             SaveWeights(weights);
 
-            Helper.ShowAlert("Do you want to save network to file? y/n", () => network.Save(NetworkFile));
+            ExtendedIOHelpers.ShowAlert("Do you want to save network to file? y/n  ", () => network.Save(NetworkFile));
 
 //            var result1 = network.Compute(new[] { 0.313725, 0.498039, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
 //            var result2 = network.Compute(new[] { 0.498039, 0.705882, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
@@ -81,24 +82,14 @@ namespace NeuronWeightsGenerator
 //            var r2 = result2;
 //            var r3 = result3;
 //            var r4 = result4;
-            var result1 = network.Compute(new[] {0.313725, 0.501961}).Select(MapNetworkValueToDriver).ToList();
-            var result2 = network.Compute(new[] {0.705882, 0.501961}).Select(MapNetworkValueToDriver).ToList();
-            var result3 = network.Compute(new[] {0.498039, 0.313725}).Select(MapNetworkValueToDriver).ToList();
-            var result4 = network.Compute(new[] {0.498039, 0.705882}).Select(MapNetworkValueToDriver).ToList();
+            var result1 = network.Compute(new[] { 0.313725, 0.501961 }).Select(Helper.MapNetworkValueToDriver).ToList();
+            var result2 = network.Compute(new[] { 0.705882, 0.501961 }).Select(Helper.MapNetworkValueToDriver).ToList();
+            var result3 = network.Compute(new[] { 0.498039, 0.313725 }).Select(Helper.MapNetworkValueToDriver).ToList();
+            var result4 = network.Compute(new[] { 0.498039, 0.705882 }).Select(Helper.MapNetworkValueToDriver).ToList();
             var r1 = result1;
             var r2 = result2;
             var r3 = result3;
             var r4 = result4;
-        }
-
-        private double MapDriverValueToNetwork(int value)
-        {
-            return (value - 87) / 75.0;
-        }
-
-        private int MapNetworkValueToDriver(double value)
-        {
-            return (int) (value * 75.0 + 87.0);
         }
 
         private bool SaveWeights(IEnumerable<IEnumerable<IEnumerable<string>>> weights)
@@ -214,11 +205,11 @@ namespace NeuronWeightsGenerator
                     while (!stream.EndOfStream)
                     {
                         var array = stream.ReadLine().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                        var inp = array.Take(_inputCount).Select(x => double.Parse(x) / 255.0).ToArray();
+                        var inp = array.Take(InputCount).Select(x => double.Parse(x) / 255.0).ToArray();
                         var outp =
-                            array.Skip(_inputCount)
-                                .Take(_outputCount)
-                                .Select(x => MapDriverValueToNetwork(int.Parse(x)))
+                            array.Skip(InputCount)
+                                .Take(OutputCount)
+                                .Select(x => Helper.MapDriverValueToNetwork(int.Parse(x)))
                                 .ToArray();
                         _inputList.Add(inp);
                         _outputList.Add(outp);
