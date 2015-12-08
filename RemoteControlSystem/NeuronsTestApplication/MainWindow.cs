@@ -1,6 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
+using AForge.Neuro;
 using JoystickLibrary.DataProviders;
+using NeuronWeightsGenerator;
 using Timer = System.Timers.Timer;
 
 namespace NeuronsTestApplication
@@ -9,14 +13,16 @@ namespace NeuronsTestApplication
     {
         private readonly Timer _timer = new Timer(1);
         private readonly XboxJoystickDataProvider _xboxDataProvider;
+        private readonly Network _network;
 
-        private delegate void InvokeDelegate(byte[] data);
+        private delegate void InvokeDelegate(int[] data);
 
         public MainWindow()
         {
             InitializeComponent();
 
             _xboxDataProvider = new XboxJoystickDataProvider();
+            _network = Network.Load(NeuronWeightsGenerator.Program.NetworkFile);
 
             if (!ConnectDevice())
             {
@@ -53,12 +59,13 @@ namespace NeuronsTestApplication
 
         private void OnPackageAvailable(byte[] data)
         {
-            // Get values from network.
+            var inputs = data.Skip(2).Take(2).Select(Convert.ToDouble).ToArray();
+            var outputs = _network.Compute(inputs).Select(Helper.MapNetworkValueToDriver).ToArray();
 
-            Invoke(new InvokeDelegate(UpdateUI), data);
+            Invoke(new InvokeDelegate(UpdateUI), outputs);
         }
 
-        private void UpdateUI(byte[] data)
+        private void UpdateUI(int[] data)
         {
             textBox1.Text = data[0].ToString();
             trackBar1.Value = data[0];
