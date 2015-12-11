@@ -78,23 +78,6 @@ namespace NeuronWeightsGenerator
                 SaveWeights(weights);
                 network.Save(NetworkFile);
             });
-
-//            var result1 = network.Compute(new[] { 0.313725, 0.498039, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
-//            var result2 = network.Compute(new[] { 0.498039, 0.705882, 0.501961, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
-//            var result3 = network.Compute(new[] { 0.498039, 0.498039, 0.313725, 0.501961 }).Select(MapNetworkValueToDriver).ToList();
-//            var result4 = network.Compute(new[] { 0.498039, 0.498039, 0.501961, 0.705882 }).Select(MapNetworkValueToDriver).ToList();
-//            var r1 = result1;
-//            var r2 = result2;
-//            var r3 = result3;
-//            var r4 = result4;
-            var result1 = network.Compute(new[] { 0.313725, 0.501961 }).Select(Helper.MapNetworkValueToDriver).ToList();
-            var result2 = network.Compute(new[] { 0.705882, 0.501961 }).Select(Helper.MapNetworkValueToDriver).ToList();
-            var result3 = network.Compute(new[] { 0.498039, 0.313725 }).Select(Helper.MapNetworkValueToDriver).ToList();
-            var result4 = network.Compute(new[] { 0.498039, 0.705882 }).Select(Helper.MapNetworkValueToDriver).ToList();
-            var r1 = result1;
-            var r2 = result2;
-            var r3 = result3;
-            var r4 = result4;
         }
 
         private bool SaveWeights(IEnumerable<IEnumerable<IEnumerable<string>>> weights)
@@ -151,6 +134,8 @@ namespace NeuronWeightsGenerator
                     // inputs: up, down, rLeft, rRight, forward, back, left, right
                     // outputs: 4
 
+                    // Elementary
+                    //
                     // Forward 127-0
                     for (int value = FB; value >= 0; value--)
                     {
@@ -182,6 +167,9 @@ namespace NeuronWeightsGenerator
 //                        WriteLine(stream, UD, UD, RLR, RLR, FB, FB, LR, value, engine, DR_MIN, DR_MIN, engine);
                         WriteLine(stream, FB, value, engine, DR_MIN, DR_MIN, engine);
                     }
+
+                    // Advanced
+                    //
                 }
                 catch (Exception ex)
                 {
