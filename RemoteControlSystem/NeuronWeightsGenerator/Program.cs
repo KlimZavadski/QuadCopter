@@ -80,48 +80,12 @@ namespace NeuronWeightsGenerator
             });
         }
 
-        private bool SaveWeights(IEnumerable<IEnumerable<IEnumerable<string>>> weights)
-        {
-            using (var stream = new StreamWriter(WeightsFile))
-            {
-                try
-                {
-                    int num = 0;
-                    stream.WriteLine("int Weights[] = {");
-
-                    foreach (var layerWeights in weights)
-                    {
-                        stream.WriteLine("    // w{0}", num++);
-
-                        foreach (var neuronWeights in layerWeights)
-                        {
-                            var row = string.Join(", ", neuronWeights);
-                            stream.WriteLine("    {0},", row);
-                        }
-                    }
-
-                    stream.WriteLine("};");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("GenerateSamples error: {0}", ex.Message);
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        #region Samples
-
         private bool GenerateSamples()
         {
             using (var stream = new StreamWriter(SamplesFile))
             {
                 try
                 {
-                    const double incK = 0.1;
-
                     //  1   2
                     //    x
                     //  4   3
@@ -134,42 +98,110 @@ namespace NeuronWeightsGenerator
                     // inputs: up, down, rLeft, rRight, forward, back, left, right
                     // outputs: 4
 
-                    // Elementary
-                    //
-                    // Forward 127-0
-                    for (int value = FB; value >= 0; value--)
+                    if (false)
                     {
-                        var engine = DR_MIN + (FB - value) * incK;
-                        //WriteLine(stream, UD, UD, RLR, RLR, value, FB, LR, LR, DR_MIN, DR_MIN, engine, engine);
-                        WriteLine(stream, value, LR, DR_MIN, DR_MIN, engine, engine);
-                    }
+                        #region Elementary sample
 
-                    // Back 127-255
-                    for (int value = FB; value <= 255; value++)
-                    {
-                        var engine = DR_MIN + (value - FB) * incK;
+                        const double incK = 0.1;
+
+                        // Forward 127-0
+                        for (int value = FB; value >= 0; value--)
+                        {
+                            var engine = DR_MIN + (FB - value) * incK;
+                            //WriteLine(stream, UD, UD, RLR, RLR, value, FB, LR, LR, DR_MIN, DR_MIN, engine, engine);
+                            WriteLine(stream, value, LR, DR_MIN, DR_MIN, engine, engine);
+                        }
+
+                        // Back 127-255
+                        for (int value = FB; value <= 255; value++)
+                        {
+                            var engine = DR_MIN + (value - FB) * incK;
 //                        WriteLine(stream, UD, UD, RLR, RLR, FB, value, LR, LR, engine, engine, DR_MIN, DR_MIN);
-                        WriteLine(stream, value, LR, engine, engine, DR_MIN, DR_MIN);
-                    }
+                            WriteLine(stream, value, LR, engine, engine, DR_MIN, DR_MIN);
+                        }
 
-                    // Left 128-0
-                    for (int value = LR; value >= 0; value--)
-                    {
-                        var engine = DR_MIN + (LR - value) * incK;
+                        // Left 128-0
+                        for (int value = LR; value >= 0; value--)
+                        {
+                            var engine = DR_MIN + (LR - value) * incK;
 //                        WriteLine(stream, UD, UD, RLR, RLR, FB, FB, value, LR, DR_MIN, engine, engine, DR_MIN);
-                        WriteLine(stream, FB, value, DR_MIN, engine, engine, DR_MIN);
-                    }
+                            WriteLine(stream, FB, value, DR_MIN, engine, engine, DR_MIN);
+                        }
 
-                    // Right 128-255
-                    for (int value = LR; value <= 255; value++)
-                    {
-                        var engine = DR_MIN + (value - LR) * incK;
+                        // Right 128-255
+                        for (int value = LR; value <= 255; value++)
+                        {
+                            var engine = DR_MIN + (value - LR) * incK;
 //                        WriteLine(stream, UD, UD, RLR, RLR, FB, FB, LR, value, engine, DR_MIN, DR_MIN, engine);
-                        WriteLine(stream, FB, value, engine, DR_MIN, DR_MIN, engine);
-                    }
+                            WriteLine(stream, FB, value, engine, DR_MIN, DR_MIN, engine);
+                        }
 
-                    // Advanced
-                    //
+                        #endregion
+                    }
+                    else
+                    {
+                        #region Advanced sample
+
+                        const double incK = 0.1;
+                        const int radiusK = 10;
+                        const double angleK = 0.1;
+
+                        for (int r = radiusK; r < 128;)
+                        {
+                            for (double a = 0.0; a < 2.0 * Math.PI; a += angleK)
+                            {
+                                double b = a - Math.PI / 4.0;
+
+                                double fbJ = FB - r * Math.Sin(a);
+                                double lrJ = LR + r * Math.Cos(a);
+
+                                if (fbJ < FB)  // Forward 127-0
+                                {
+                                    //var engineF = DR_MIN + (FB - fbJ) * incK;
+
+                                    if (lrJ < LR)  // Left 128-0
+                                    {
+                                        // Main engine - 3.
+                                        // Additionals - 4 & 2.
+
+                                        var mainEn = DR_MIN + r * Math.Sin(b) * incK;
+                                        var addEn = DR_MIN + r * Math.Cos(b) * incK;
+
+                                        var en4 = addEn > 0 ? addEn : mainEn + addEn;
+                                        var en2 = addEn < 0 ? Math.Abs(addEn) : mainEn - addEn;
+
+                                        WriteLine(stream, fbJ, lrJ, DR_MIN, en2, mainEn, en4);
+                                    }
+                                    else if (LR < lrJ)  // Right 128-255
+                                    {
+                                        // Main engine - 4.
+                                        // Additionals - 1 & 3.
+
+                                        var mainEn = DR_MIN + r * Math.Cos(b) * incK;
+                                        var addEn = DR_MIN + r * Math.Sin(b) * incK;
+
+                                        var en1 = addEn < 0 ? Math.Abs(addEn) : mainEn - addEn;
+                                        var en3 = addEn > 0 ? addEn : mainEn + addEn;
+
+                                        WriteLine(stream, fbJ, lrJ, en1, DR_MIN, en3, mainEn);
+                                    }
+                                }
+                                else  // Back 127-255
+                                {
+                                    //
+                                }
+                            }
+
+                            if (r == 127)
+                            {
+                                break;
+                            }
+
+                            r = 128 - r > radiusK ? r + radiusK : 127;
+                        }
+
+                        #endregion
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -218,6 +250,36 @@ namespace NeuronWeightsGenerator
             return true;
         }
 
-        #endregion
+        private bool SaveWeights(IEnumerable<IEnumerable<IEnumerable<string>>> weights)
+        {
+            using (var stream = new StreamWriter(WeightsFile))
+            {
+                try
+                {
+                    int num = 0;
+                    stream.WriteLine("int Weights[] = {");
+
+                    foreach (var layerWeights in weights)
+                    {
+                        stream.WriteLine("    // w{0}", num++);
+
+                        foreach (var neuronWeights in layerWeights)
+                        {
+                            var row = string.Join(", ", neuronWeights);
+                            stream.WriteLine("    {0},", row);
+                        }
+                    }
+
+                    stream.WriteLine("};");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("GenerateSamples error: {0}", ex.Message);
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }
