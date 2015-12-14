@@ -157,18 +157,16 @@ namespace NeuronWeightsGenerator
 
                                 if (fbJ < FB)  // Forward 127-0
                                 {
-                                    //var engineF = DR_MIN + (FB - fbJ) * incK;
-
                                     if (lrJ < LR)  // Left 128-0
                                     {
                                         // Main engine - 3.
-                                        // Additionals - 4 & 2.
+                                        // Additionals - 2 & 4.
 
                                         var mainEn = DR_MIN + r * Math.Sin(b) * incK;
                                         var addEn = DR_MIN + r * Math.Cos(b) * incK;
 
-                                        var en4 = addEn > 0 ? addEn : mainEn + addEn;
-                                        var en2 = addEn < 0 ? Math.Abs(addEn) : mainEn - addEn;
+                                        var en2 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
+                                        var en4 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
 
                                         WriteLine(stream, fbJ, lrJ, DR_MIN, en2, mainEn, en4);
                                     }
@@ -180,10 +178,16 @@ namespace NeuronWeightsGenerator
                                         var mainEn = DR_MIN + r * Math.Cos(b) * incK;
                                         var addEn = DR_MIN + r * Math.Sin(b) * incK;
 
-                                        var en1 = addEn < 0 ? Math.Abs(addEn) : mainEn - addEn;
-                                        var en3 = addEn > 0 ? addEn : mainEn + addEn;
+                                        var en1 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
+                                        var en3 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
 
                                         WriteLine(stream, fbJ, lrJ, en1, DR_MIN, en3, mainEn);
+                                    }
+                                    else  // straight Forward
+                                    {
+                                        var en = DR_MIN + r * incK;
+
+                                        WriteLine(stream, fbJ, lrJ, DR_MIN, DR_MIN, en, en);
                                     }
                                 }
                                 else  // Back 127-255
