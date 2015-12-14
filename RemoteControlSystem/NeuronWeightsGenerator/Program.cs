@@ -159,8 +159,8 @@ namespace NeuronWeightsGenerator
                                 {
                                     if (lrJ < LR)  // Left 128-0
                                     {
-                                        // Main engine - 3.
-                                        // Additionals - 2 & 4.
+                                        // main engine - 3.
+                                        // additionals - 2 & 4.
 
                                         var mainEn = DR_MIN + r * Math.Sin(b) * incK;
                                         var addEn = DR_MIN + r * Math.Cos(b) * incK;
@@ -172,8 +172,8 @@ namespace NeuronWeightsGenerator
                                     }
                                     else if (LR < lrJ)  // Right 128-255
                                     {
-                                        // Main engine - 4.
-                                        // Additionals - 1 & 3.
+                                        // main engine - 4.
+                                        // additionals - 1 & 3.
 
                                         var mainEn = DR_MIN + r * Math.Cos(b) * incK;
                                         var addEn = DR_MIN + r * Math.Sin(b) * incK;
@@ -192,7 +192,38 @@ namespace NeuronWeightsGenerator
                                 }
                                 else  // Back 127-255
                                 {
-                                    //
+                                    if (lrJ < LR)  // Left 128-0
+                                    {
+                                        // main engine - 2.
+                                        // additionals - 1 & 3.
+
+                                        var mainEn = DR_MIN - r * Math.Cos(b) * incK;
+                                        var addEn = DR_MIN + r * Math.Sin(b) * incK;
+
+                                        var en1 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
+                                        var en3 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
+
+                                        WriteLine(stream, fbJ, lrJ, en1, mainEn, en3, DR_MIN);
+                                    }
+                                    else if (LR < lrJ)  // Right 128-255
+                                    {
+                                        // main engine - 1.
+                                        // additionals - 4 & 2.
+
+                                        var mainEn = DR_MIN - r * Math.Sin(b) * incK;
+                                        var addEn = DR_MIN + r * Math.Cos(b) * incK;
+
+                                        var en4 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
+                                        var en2 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
+
+                                        WriteLine(stream, fbJ, lrJ, mainEn, en2, DR_MIN, en4);
+                                    }
+                                    else  // straight Back
+                                    {
+                                        var en = DR_MIN + r * incK;
+
+                                        WriteLine(stream, fbJ, lrJ, en, en, DR_MIN, DR_MIN);
+                                    }
                                 }
                             }
 
