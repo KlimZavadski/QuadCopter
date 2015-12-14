@@ -183,14 +183,14 @@ namespace NeuronWeightsGenerator
 
                                         WriteLine(stream, fbJ, lrJ, en1, DR_MIN, en3, mainEn);
                                     }
-                                    else  // straight Forward
+                                    else  // Straight Forward
                                     {
                                         var en = DR_MIN + r * incK;
 
                                         WriteLine(stream, fbJ, lrJ, DR_MIN, DR_MIN, en, en);
                                     }
                                 }
-                                else  // Back 127-255
+                                else if (fbJ > FB)  // Back 127-255
                                 {
                                     if (lrJ < LR)  // Left 128-0
                                     {
@@ -218,11 +218,26 @@ namespace NeuronWeightsGenerator
 
                                         WriteLine(stream, fbJ, lrJ, mainEn, en2, DR_MIN, en4);
                                     }
-                                    else  // straight Back
+                                    else  // Straight Back
                                     {
                                         var en = DR_MIN + r * incK;
 
                                         WriteLine(stream, fbJ, lrJ, en, en, DR_MIN, DR_MIN);
+                                    }
+                                }
+                                else // Straight
+                                {
+                                    if (lrJ < LR)  // Straight Left 128-0
+                                    {
+                                        var en = DR_MIN + r * incK;
+
+                                        WriteLine(stream, fbJ, lrJ, en, DR_MIN, DR_MIN, en);
+                                    }
+                                    else if (LR < lrJ)  // Straight Right 128-255
+                                    {
+                                        var en = DR_MIN + r * incK;
+
+                                        WriteLine(stream, fbJ, lrJ, DR_MIN, en, en, DR_MIN);
                                     }
                                 }
                             }
