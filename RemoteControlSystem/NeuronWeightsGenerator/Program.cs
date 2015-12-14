@@ -162,11 +162,12 @@ namespace NeuronWeightsGenerator
                                         // main engine - 3.
                                         // additionals - 2 & 4.
 
-                                        var mainEn = DR_MIN + r * Math.Sin(b) * incK;
-                                        var addEn = DR_MIN + r * Math.Cos(b) * incK;
+                                        var mainEn = r * Math.Sin(b) * incK;
+                                        var addEn = r * Math.Cos(b) * incK;
 
-                                        var en2 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
-                                        var en4 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
+                                        var en2 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
+                                        var en4 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
+                                        mainEn += DR_MIN;
 
                                         WriteLine(stream, fbJ, lrJ, DR_MIN, en2, mainEn, en4);
                                     }
@@ -175,11 +176,12 @@ namespace NeuronWeightsGenerator
                                         // main engine - 4.
                                         // additionals - 1 & 3.
 
-                                        var mainEn = DR_MIN + r * Math.Cos(b) * incK;
-                                        var addEn = DR_MIN + r * Math.Sin(b) * incK;
+                                        var mainEn = r * Math.Cos(b) * incK;
+                                        var addEn = r * Math.Sin(b) * incK;
 
-                                        var en1 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
-                                        var en3 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
+                                        var en1 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
+                                        var en3 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
+                                        mainEn += DR_MIN;
 
                                         WriteLine(stream, fbJ, lrJ, en1, DR_MIN, en3, mainEn);
                                     }
@@ -197,11 +199,12 @@ namespace NeuronWeightsGenerator
                                         // main engine - 2.
                                         // additionals - 1 & 3.
 
-                                        var mainEn = DR_MIN - r * Math.Cos(b) * incK;
-                                        var addEn = DR_MIN + r * Math.Sin(b) * incK;
+                                        var mainEn = (-1.0) * r * Math.Cos(b) * incK;
+                                        var addEn = r * Math.Sin(b) * incK;
 
-                                        var en1 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
-                                        var en3 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
+                                        var en1 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
+                                        var en3 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
+                                        mainEn += DR_MIN;
 
                                         WriteLine(stream, fbJ, lrJ, en1, mainEn, en3, DR_MIN);
                                     }
@@ -210,11 +213,12 @@ namespace NeuronWeightsGenerator
                                         // main engine - 1.
                                         // additionals - 4 & 2.
 
-                                        var mainEn = DR_MIN - r * Math.Sin(b) * incK;
-                                        var addEn = DR_MIN + r * Math.Cos(b) * incK;
+                                        var mainEn = (-1) * r * Math.Sin(b) * incK;
+                                        var addEn = r * Math.Cos(b) * incK;
 
-                                        var en4 = addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0;
-                                        var en2 = addEn > 0 ? addEn : (mainEn + addEn) / 2.0;
+                                        var en4 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
+                                        var en2 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
+                                        mainEn += DR_MIN;
 
                                         WriteLine(stream, fbJ, lrJ, mainEn, en2, DR_MIN, en4);
                                     }
