@@ -20,6 +20,8 @@ namespace NeuronWeightsGenerator
         private readonly List<double[]> _inputList = new List<double[]>();
         private readonly List<double[]> _outputList = new List<double[]>();
 
+        private bool _isUseElementaryTraining = false;
+
         #region Constants
 
         protected const int DR_MIN = 87;
@@ -35,7 +37,6 @@ namespace NeuronWeightsGenerator
         private static void Main(string[] args)
         {
             new Program().Worker();
-            Thread.CurrentThread.Join();
         }
 
         private void Worker()
@@ -59,7 +60,7 @@ namespace NeuronWeightsGenerator
             const int iterations = 5000;
             double error = 1.0;
 
-            while (iteration < iterations && error < 0.00005)
+            while (iteration < iterations && error > 0.00005)
             {
                 error = teacher.RunEpoch(_inputList.ToArray(), _outputList.ToArray()) / _inputList.Count;
                 iteration++;
@@ -78,6 +79,8 @@ namespace NeuronWeightsGenerator
                 SaveWeights(weights);
                 network.Save(NetworkFile);
             });
+
+            Console.ReadLine();
         }
 
         private bool GenerateSamples()
@@ -98,7 +101,7 @@ namespace NeuronWeightsGenerator
                     // inputs: up, down, rLeft, rRight, forward, back, left, right
                     // outputs: 4
 
-                    if (false)
+                    if (_isUseElementaryTraining)
                     {
                         #region Elementary sample
 
@@ -144,7 +147,7 @@ namespace NeuronWeightsGenerator
 
                         const double incK = 0.1;
                         const int radiusK = 10;
-                        const double angleK = 0.1;
+                        const double angleK = Math.PI / 180.0; // in radians.
 
                         for (int r = radiusK; r < 128;)
                         {
@@ -271,7 +274,7 @@ namespace NeuronWeightsGenerator
         {
 //            stream.WriteLine("{0:000} {1:000} {2:000} {3:000} {4:000} {5:000} {6:000} {7:000} {8:000} {9:000} {10:000} {11:000}",
 //                arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9], arg[10], arg[11]);
-            stream.WriteLine("{0:000} {1:000} {2:000} {3:000} {4:000} {5:000}",
+            stream.WriteLine("{0:000};{1:000};{2:000};{3:000};{4:000};{5:000}",
                 arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
         }
 
@@ -283,7 +286,7 @@ namespace NeuronWeightsGenerator
                 {
                     while (!stream.EndOfStream)
                     {
-                        var array = stream.ReadLine().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                        var array = stream.ReadLine().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
                         var inp = array.Take(InputCount).Select(x => double.Parse(x) / 255.0).ToArray();
                         var outp =
                             array.Skip(InputCount)
