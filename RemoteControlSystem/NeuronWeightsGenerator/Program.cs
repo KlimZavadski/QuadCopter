@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using AForge.Neuro;
 using AForge.Neuro.Learning;
 using ExtendedLibrary;
@@ -59,6 +59,8 @@ namespace NeuronWeightsGenerator
             int iteration = 0;
             const int iterations = 5000;
             double error = 1.0;
+            var st = new Stopwatch();
+            st.Start();
 
             while (iteration < iterations && error > 0.00005)
             {
@@ -66,7 +68,10 @@ namespace NeuronWeightsGenerator
                 iteration++;
             }
 
-            Console.WriteLine("Network successfully trained! Error = {0:0.######}, Iteration = {1}\n", error, iteration);
+            var time = st.ElapsedMilliseconds;
+            st.Stop();
+            Console.WriteLine("Network successfully trained! Error = {0:0.######}, Iteration = {1}", error, iteration);
+            Console.WriteLine("Time = {0:0.000} s\n", time);
 
             // Normalize weights and convert to string format.
             var weights = network.Layers
@@ -145,108 +150,48 @@ namespace NeuronWeightsGenerator
                     {
                         #region Advanced sample
 
-                        const double incK = 0.1;
-                        const int radiusK = 10;
-                        const double angleK = Math.PI / 180.0; // in radians.
+                        const double incK = 0.2;
+                        const int radiusK = 127;
+                        const double angleK = 1.0;  // 1 degree
 
                         for (int r = radiusK; r < 128;)
                         {
-                            for (double a = 0.0; a < 2.0 * Math.PI; a += angleK)
+                            for (double a = 0.0; a <= 360; a += angleK)
                             {
-                                double b = a - Math.PI / 4.0;
+                                double b = a - 45;  // lag on 45 degrees
+                                double aR = a / 180.0 * Math.PI;
+                                double bR = b / 180.0 * Math.PI;
 
-                                double fbJ = FB - r * Math.Sin(a);
-                                double lrJ = LR + r * Math.Cos(a);
+                                double fbJ = FB - r * Math.Sin(aR);
+                                double lrJ = LR + r * Math.Cos(aR);
 
-                                if (fbJ < FB)  // Forward 127-0
+                                double en1 = DR_MIN;
+                                double en2 = DR_MIN;
+                                double en3 = DR_MIN;
+                                double en4 = DR_MIN;
+
+                                if (0 <= b && b < 90)
                                 {
-                                    if (lrJ < LR)  // Left 128-0
-                                    {
-                                        // main engine - 3.
-                                        // additionals - 2 & 4.
-
-                                        var mainEn = r * Math.Sin(b) * incK;
-                                        var addEn = r * Math.Cos(b) * incK;
-
-                                        var en2 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
-                                        var en4 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
-                                        mainEn += DR_MIN;
-
-                                        WriteLine(stream, fbJ, lrJ, DR_MIN, en2, mainEn, en4);
-                                    }
-                                    else if (LR < lrJ)  // Right 128-255
-                                    {
-                                        // main engine - 4.
-                                        // additionals - 1 & 3.
-
-                                        var mainEn = r * Math.Cos(b) * incK;
-                                        var addEn = r * Math.Sin(b) * incK;
-
-                                        var en1 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
-                                        var en3 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
-                                        mainEn += DR_MIN;
-
-                                        WriteLine(stream, fbJ, lrJ, en1, DR_MIN, en3, mainEn);
-                                    }
-                                    else  // Straight Forward
-                                    {
-                                        var en = DR_MIN + r * incK;
-
-                                        WriteLine(stream, fbJ, lrJ, DR_MIN, DR_MIN, en, en);
-                                    }
+                                    en4 += r * incK * Math.Cos(bR);
+                                    en3 += r * incK * Math.Sin(bR);
                                 }
-                                else if (fbJ > FB)  // Back 127-255
+                                else if (90 <= b && b < 180)
                                 {
-                                    if (lrJ < LR)  // Left 128-0
-                                    {
-                                        // main engine - 2.
-                                        // additionals - 1 & 3.
-
-                                        var mainEn = (-1.0) * r * Math.Cos(b) * incK;
-                                        var addEn = r * Math.Sin(b) * incK;
-
-                                        var en1 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
-                                        var en3 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
-                                        mainEn += DR_MIN;
-
-                                        WriteLine(stream, fbJ, lrJ, en1, mainEn, en3, DR_MIN);
-                                    }
-                                    else if (LR < lrJ)  // Right 128-255
-                                    {
-                                        // main engine - 1.
-                                        // additionals - 4 & 2.
-
-                                        var mainEn = (-1) * r * Math.Sin(b) * incK;
-                                        var addEn = r * Math.Cos(b) * incK;
-
-                                        var en4 = DR_MIN + (addEn < 0 ? Math.Abs(addEn) : (mainEn - addEn) / 2.0);
-                                        var en2 = DR_MIN + (addEn > 0 ? addEn : (mainEn + addEn) / 2.0);
-                                        mainEn += DR_MIN;
-
-                                        WriteLine(stream, fbJ, lrJ, mainEn, en2, DR_MIN, en4);
-                                    }
-                                    else  // Straight Back
-                                    {
-                                        var en = DR_MIN + r * incK;
-
-                                        WriteLine(stream, fbJ, lrJ, en, en, DR_MIN, DR_MIN);
-                                    }
+                                    en3 += r * incK * Math.Sin(bR);
+                                    en2 -= r * incK * Math.Cos(bR);
                                 }
-                                else // Straight
+                                else if (180 <= b && b < 270)
                                 {
-                                    if (lrJ < LR)  // Straight Left 128-0
-                                    {
-                                        var en = DR_MIN + r * incK;
-
-                                        WriteLine(stream, fbJ, lrJ, en, DR_MIN, DR_MIN, en);
-                                    }
-                                    else if (LR < lrJ)  // Straight Right 128-255
-                                    {
-                                        var en = DR_MIN + r * incK;
-
-                                        WriteLine(stream, fbJ, lrJ, DR_MIN, en, en, DR_MIN);
-                                    }
+                                    en2 -= r * incK * Math.Cos(bR);
+                                    en1 -= r * incK * Math.Sin(bR);
                                 }
+                                else
+                                {
+                                    en1 -= r * incK * Math.Sin(bR);
+                                    en4 += r * incK * Math.Cos(bR);
+                                }
+
+                                WriteLine(stream, fbJ, lrJ, en1, en2, en3, en4);
                             }
 
                             if (r == 127)
