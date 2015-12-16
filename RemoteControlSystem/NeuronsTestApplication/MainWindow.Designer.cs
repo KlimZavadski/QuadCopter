@@ -40,6 +40,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.knobControl = new DevComponents.Instrumentation.KnobControl();
+            this.textBoxR = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
@@ -48,9 +50,9 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Location = new System.Drawing.Point(248, 60);
+            this.trackBar1.Location = new System.Drawing.Point(282, 60);
             this.trackBar1.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar1.Maximum = 140;
+            this.trackBar1.Maximum = 120;
             this.trackBar1.Minimum = 85;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -62,7 +64,7 @@
             // 
             this.trackBar2.Location = new System.Drawing.Point(694, 60);
             this.trackBar2.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar2.Maximum = 140;
+            this.trackBar2.Maximum = 120;
             this.trackBar2.Minimum = 85;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -74,7 +76,7 @@
             // 
             this.trackBar4.Location = new System.Drawing.Point(128, 348);
             this.trackBar4.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar4.Maximum = 140;
+            this.trackBar4.Maximum = 120;
             this.trackBar4.Minimum = 85;
             this.trackBar4.Name = "trackBar4";
             this.trackBar4.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -86,7 +88,7 @@
             // 
             this.trackBar3.Location = new System.Drawing.Point(838, 348);
             this.trackBar3.Margin = new System.Windows.Forms.Padding(6);
-            this.trackBar3.Maximum = 140;
+            this.trackBar3.Maximum = 120;
             this.trackBar3.Minimum = 85;
             this.trackBar3.Name = "trackBar3";
             this.trackBar3.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -97,7 +99,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(138, 269);
+            this.label1.Location = new System.Drawing.Point(172, 269);
             this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(97, 25);
@@ -106,7 +108,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(248, 263);
+            this.textBox1.Location = new System.Drawing.Point(282, 263);
             this.textBox1.Margin = new System.Windows.Forms.Padding(6);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(86, 31);
@@ -166,11 +168,51 @@
             this.label4.TabIndex = 10;
             this.label4.Text = "Engine 1";
             // 
+            // knobControl
+            // 
+            this.knobControl.Location = new System.Drawing.Point(367, 326);
+            this.knobControl.MajorTickAmount = new decimal(new int[] {
+            45,
+            0,
+            0,
+            0});
+            this.knobControl.MaxValue = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.knobControl.MinorTickAmount = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.knobControl.MinValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.knobControl.Name = "knobControl";
+            this.knobControl.Size = new System.Drawing.Size(293, 290);
+            this.knobControl.StartAngle = 0;
+            this.knobControl.SweepAngle = -360;
+            this.knobControl.TabIndex = 12;
+            this.knobControl.Text = "knobControl";
+            // 
+            // textBoxR
+            // 
+            this.textBoxR.Location = new System.Drawing.Point(467, 625);
+            this.textBoxR.Margin = new System.Windows.Forms.Padding(6);
+            this.textBoxR.Name = "textBoxR";
+            this.textBoxR.Size = new System.Drawing.Size(86, 31);
+            this.textBoxR.TabIndex = 13;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1548, 1094);
+            this.Controls.Add(this.textBoxR);
+            this.Controls.Add(this.knobControl);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox3);
@@ -209,6 +251,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Label label4;
+        private DevComponents.Instrumentation.KnobControl knobControl;
+        private System.Windows.Forms.TextBox textBoxR;
     }
 }
 
