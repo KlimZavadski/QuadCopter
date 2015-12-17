@@ -63,9 +63,22 @@ namespace NeuronsTestApplication
             joystickData[0] -= 127.0;
             joystickData[1] -= 128.0;
 
-            var tan = joystickData[1] != 0.0 ? -joystickData[0] / joystickData[1] : 0.0;
-            var angle = Math.Atan(Double.IsNaN(tan) ? 0 : tan);
-            var a = Math.Abs(angle) * 180.0 / Math.PI + (angle > 0 ? 0 : 180);
+            var tan = joystickData[1] != 0.0 ? Math.Abs(joystickData[0]) / Math.Abs(joystickData[1]) : 0.0;
+            var angle = Math.Atan(Double.IsNaN(tan) ? 0.0 : tan) * 180.0 / Math.PI;
+
+            if (joystickData[0] > 0 && joystickData[1] < 0)  // 2 / 4
+            {
+                angle = 180.0 - angle;
+            }
+            else if (joystickData[0] < 0 && joystickData[1] < 0)  // 3 / 4
+            {
+                angle = 180.0 + angle;
+            }
+            else if (joystickData[0] < 0 && joystickData[1] > 0)  // 4 / 4
+            {
+                angle = 360.0 - angle;
+            }
+
             var r = Math.Sqrt(Math.Pow(joystickData[0], 2.0) + Math.Pow(joystickData[1], 2.0));
 
             var inputs = data.Skip(2).Take(2).Select(Helper.MapJoystickValueToNetwork).ToArray();
