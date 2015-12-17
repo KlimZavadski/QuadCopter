@@ -57,7 +57,7 @@ namespace NeuronWeightsGenerator
             Console.WriteLine("Start training the network.");
 
             int iteration = 0;
-            const int iterations = 5000;
+            const int iterations = 10000;
             double error = 1.0;
             var st = new Stopwatch();
             st.Start();
@@ -68,7 +68,7 @@ namespace NeuronWeightsGenerator
                 iteration++;
             }
 
-            var time = st.ElapsedMilliseconds;
+            var time = st.ElapsedMilliseconds / 1000.0;
             st.Stop();
             Console.WriteLine("Network successfully trained! Error = {0:0.######}, Iteration = {1}", error, iteration);
             Console.WriteLine("Time = {0:0.000} s\n", time);
@@ -151,7 +151,7 @@ namespace NeuronWeightsGenerator
                         #region Advanced sample
 
                         const double incK = 0.2;
-                        const int radiusK = 127;
+                        const int radiusK = 10;
                         const double angleK = 1.0;  // 1 degree
 
                         for (int r = radiusK; r < 128;)
