@@ -41,7 +41,8 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.knobControl = new DevComponents.Instrumentation.KnobControl();
-            this.textBoxR = new System.Windows.Forms.TextBox();
+            this.textBoxAngle = new System.Windows.Forms.TextBox();
+            this.textBoxRadius = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
@@ -166,7 +167,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(97, 25);
             this.label4.TabIndex = 10;
-            this.label4.Text = "Engine 1";
+            this.label4.Text = "Engine 4";
             // 
             // knobControl
             // 
@@ -198,20 +199,29 @@
             this.knobControl.TabIndex = 12;
             this.knobControl.Text = "knobControl";
             // 
-            // textBoxR
+            // textBoxAngle
             // 
-            this.textBoxR.Location = new System.Drawing.Point(467, 625);
-            this.textBoxR.Margin = new System.Windows.Forms.Padding(6);
-            this.textBoxR.Name = "textBoxR";
-            this.textBoxR.Size = new System.Drawing.Size(86, 31);
-            this.textBoxR.TabIndex = 13;
+            this.textBoxAngle.Location = new System.Drawing.Point(418, 625);
+            this.textBoxAngle.Margin = new System.Windows.Forms.Padding(6);
+            this.textBoxAngle.Name = "textBoxAngle";
+            this.textBoxAngle.Size = new System.Drawing.Size(86, 31);
+            this.textBoxAngle.TabIndex = 13;
+            // 
+            // textBoxRadius
+            // 
+            this.textBoxRadius.Location = new System.Drawing.Point(516, 625);
+            this.textBoxRadius.Margin = new System.Windows.Forms.Padding(6);
+            this.textBoxRadius.Name = "textBoxRadius";
+            this.textBoxRadius.Size = new System.Drawing.Size(86, 31);
+            this.textBoxRadius.TabIndex = 14;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1548, 1094);
-            this.Controls.Add(this.textBoxR);
+            this.ClientSize = new System.Drawing.Size(996, 715);
+            this.Controls.Add(this.textBoxRadius);
+            this.Controls.Add(this.textBoxAngle);
             this.Controls.Add(this.knobControl);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label4);
@@ -252,7 +262,8 @@
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Label label4;
         private DevComponents.Instrumentation.KnobControl knobControl;
-        private System.Windows.Forms.TextBox textBoxR;
+        private System.Windows.Forms.TextBox textBoxAngle;
+        private System.Windows.Forms.TextBox textBoxRadius;
     }
 }
 

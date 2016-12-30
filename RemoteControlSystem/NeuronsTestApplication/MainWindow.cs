@@ -14,6 +14,7 @@ namespace NeuronsTestApplication
         private readonly Timer _timer = new Timer(1);
         private readonly XboxJoystickDataProvider _xboxDataProvider;
         private readonly Network _network;
+        private bool _canInvoke = true;
 
         private delegate void InvokeDelegate(int[] data, double a, double r);
 
@@ -44,6 +45,13 @@ namespace NeuronsTestApplication
             return false;
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            _canInvoke = false;
+        }
+
         #region override base of Form members
 
         protected override void OnClosing(CancelEventArgs e)
@@ -60,23 +68,53 @@ namespace NeuronsTestApplication
         private void OnPackageAvailable(byte[] data)
         {
             var joystickData = data.Skip(2).Take(2).Select(Convert.ToDouble).ToArray();
-            joystickData[0] -= 127.0;
+            joystickData[0] = (joystickData[0] - 127.0) * (-1);
             joystickData[1] -= 128.0;
 
-            var tan = joystickData[1] != 0.0 ? Math.Abs(joystickData[0]) / Math.Abs(joystickData[1]) : 0.0;
-            var angle = Math.Atan(Double.IsNaN(tan) ? 0.0 : tan) * 180.0 / Math.PI;
+            double angle = 0;
 
-            if (joystickData[0] > 0 && joystickData[1] < 0)  // 2 / 4
+            if (joystickData[1] != 0.0)
             {
-                angle = 180.0 - angle;
+                if (joystickData[0] != 0.0)
+                {
+                    var tan = Math.Abs(joystickData[0]) / Math.Abs(joystickData[1]);
+                    angle = Math.Atan(Double.IsNaN(tan) ? 0.0 : tan) * 180.0 / Math.PI;
+
+                    if (joystickData[0] > 0 && joystickData[1] < 0)  // 2 / 4
+                    {
+                        angle = 180.0 - angle;
+                    }
+                    else if (joystickData[0] < 0 && joystickData[1] < 0)  // 3 / 4
+                    {
+                        angle = 180.0 + angle;
+                    }
+                    else if (joystickData[0] < 0 && joystickData[1] > 0)  // 4 / 4
+                    {
+                        angle = 360.0 - angle;
+                    }
+                }
+                else
+                {
+                    if (joystickData[1] > 0)
+                    {
+                        angle = 0;
+                    }
+                    if (joystickData[1] < 0)
+                    {
+                        angle = 180;
+                    }
+                }
             }
-            else if (joystickData[0] < 0 && joystickData[1] < 0)  // 3 / 4
+            else
             {
-                angle = 180.0 + angle;
-            }
-            else if (joystickData[0] < 0 && joystickData[1] > 0)  // 4 / 4
-            {
-                angle = 360.0 - angle;
+                if (joystickData[0] > 0)
+                {
+                    angle = 90;
+                }
+                if (joystickData[0] < 0)
+                {
+                    angle = 270;
+                }
             }
 
             var r = Math.Sqrt(Math.Pow(joystickData[0], 2.0) + Math.Pow(joystickData[1], 2.0));
@@ -84,13 +122,17 @@ namespace NeuronsTestApplication
             var inputs = data.Skip(2).Take(2).Select(Helper.MapJoystickValueToNetwork).ToArray();
             var outputs = _network.Compute(inputs).Select(Helper.MapNetworkValueToDriver).ToArray();
 
-            Invoke(new InvokeDelegate(UpdateUI), outputs, a, r);
+            if (_canInvoke)
+            {
+                Invoke(new InvokeDelegate(UpdateUI), outputs, angle, r);
+            }
         }
 
         private void UpdateUI(int[] data, double a, double r)
         {
             knobControl.Value = Convert.ToDecimal(a);
-            textBoxR.Text = r.ToString();
+            textBoxAngle.Text = Math.Round(a, 0).ToString();
+            textBoxRadius.Text = Math.Round(r, 1).ToString();
 
             trackBar1.Value = data[0] > 120 ? 120 : data[0];
             textBox1.Text = data[0].ToString();

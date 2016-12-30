@@ -266,6 +266,7 @@ int transmiteData(byte buffer[], int size)
 
 // Weights of neurons
 // 0-32767, 15bits + sign
+// Mul to 1000
 int Weights[] = {
     // w0
     1951, 3137,
@@ -293,11 +294,11 @@ int Weights[] = {
 };
 
 // Input array for neurons.
-// 0-32767, 15bits without sign.
+// 0-65535, 16bits without sign.
 uint Input[8];
 
 // Output array for neurons.
-// 0-32767, 15bits without sign.
+// 0-65535, 16bits without sign.
 uint Output[8];
 
 void computeNeuron(byte num)
@@ -311,8 +312,8 @@ void computeNeuron(byte num)
             sum += (long) Input[i] * Weights[num * 4 + i];
         }
 
-        double norm = sum / 1073676289.0;  // normalization to (0,1).
-        uint result = Sigma(norm) * 32767.0;  // restore to uint.
+        double norm = sum / 65535.0 * 1000.0;  // normalization to (0,1).
+        uint result = Sigma(norm) * 65535.0;  // restore to uint.
         Output[num] = result;
     }
     else if (num < 16)  // Second layer.
@@ -322,10 +323,10 @@ void computeNeuron(byte num)
         for (byte i = 0; i < 8; i++)
         {
             sum += (long) Output[i] * Weights[num * 8 + i];
-        }
+        }2
 
-        double norm = sum / 1073676289.0;  // normalization to (0,1).
-        uint result = Sigma(norm) * 32767.0;  // restore to uint.
+        double norm = sum / 65535.0 * 1000.0;  // normalization to (0,1).
+        uint result = Sigma(norm) * 65535.0;  // restore to uint.
         Input[num] = result;
     }
     if (num < 20)
@@ -337,8 +338,8 @@ void computeNeuron(byte num)
             sum += (long) Input[i] * Weights[num * 8 + i];
         }
 
-        double norm = sum / 1073676289.0;  // normalization to (0,1).
-        uint result = Sigma(norm) * 32767.0;  // restore to uint.
+        double norm = sum / 65535.0 * 1000.0;  // normalization to (0,1).
+        uint result = Sigma(norm) * 65535.0;  // restore to uint.
         Output[num] = result;
     }
 }

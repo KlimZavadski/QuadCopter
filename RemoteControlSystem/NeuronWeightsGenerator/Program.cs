@@ -24,8 +24,8 @@ namespace NeuronWeightsGenerator
 
         #region Constants
 
-        protected const int DR_MIN = 87;
-        protected const int DR_MAX = 160;
+        protected const int DR_MIN = Helper.DrMin + 2; // = 87.
+        protected const int DR_MAX = Helper.DrMax;
 
         protected const int UD = 127;
         protected const int RLR = 128;
@@ -48,16 +48,18 @@ namespace NeuronWeightsGenerator
                 return;
             }
 
-            var network = new ActivationNetwork(new SigmoidFunction(1), InputCount, 8, 8, OutputCount);
+            Console.WriteLine("Loaded {0} samples", _inputList.Count);
+
+            var network = new ActivationNetwork(new SigmoidFunction(1), InputCount, OutputCount);
             var teacher = new BackPropagationLearning(network)
             {
-                Momentum = 0.1
+                LearningRate = 0.01
             };
 
             Console.WriteLine("Start training the network.");
 
             int iteration = 0;
-            const int iterations = 10000;
+            const int iterations = 5000;
             double error = 1.0;
             var st = new Stopwatch();
             st.Start();
@@ -150,15 +152,18 @@ namespace NeuronWeightsGenerator
                     {
                         #region Advanced sample
 
-                        const double incK = 0.2;
-                        const int radiusK = 10;
-                        const double angleK = 1.0;  // 1 degree
+                        double incK = 0.05;
 
-                        for (int r = radiusK; r < 128;)
+                        const int speed = 5;
+                        const int radiusK = 2 * speed;  // 10
+                        const double angleK = 1.0 * speed;  // 5 degree
+
+                        for (int r = 10; r < 128;)
                         {
-                            for (double a = 0.0; a <= 360; a += angleK)
+                            for (double a = 0.0; a < 360; a += angleK)
                             {
-                                double b = a - 45;  // lag on 45 degrees
+                                double b = a < 45 ? 315 + a : a - 45;  // lag on 45 degrees
+
                                 double aR = a / 180.0 * Math.PI;
                                 double bR = b / 180.0 * Math.PI;
 
@@ -200,6 +205,7 @@ namespace NeuronWeightsGenerator
                             }
 
                             r = 128 - r > radiusK ? r + radiusK : 127;
+                            //incK += 0.015 * speed / 5.0;
                         }
 
                         #endregion
@@ -220,7 +226,12 @@ namespace NeuronWeightsGenerator
 //            stream.WriteLine("{0:000} {1:000} {2:000} {3:000} {4:000} {5:000} {6:000} {7:000} {8:000} {9:000} {10:000} {11:000}",
 //                arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9], arg[10], arg[11]);
             stream.WriteLine("{0:000};{1:000};{2:000};{3:000};{4:000};{5:000}",
-                arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
+                Round(arg[0]), Round(arg[1]), Round(arg[2]), Round(arg[3]), Round(arg[4]), Round(arg[5]));
+        }
+
+        private int Round(object d)
+        {
+            return (int) Math.Round(Convert.ToDouble(d), 0);
         }
 
         private bool LoadSamples()
@@ -241,6 +252,9 @@ namespace NeuronWeightsGenerator
                         _inputList.Add(inp);
                         _outputList.Add(outp);
                     }
+
+                    _inputList.AddRange(_inputList.ToArray().Reverse());
+                    _outputList.AddRange(_outputList.ToArray().Reverse());
                 }
                 catch (Exception ex)
                 {
